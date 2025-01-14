@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { RefreshCw, HelpCircle, ArrowRight } from "lucide-react";
+import { RefreshCw, HelpCircle, ArrowRight, Info } from "lucide-react";
 import { getValidWords } from "@/utils/wordUtils";
 import { findWordPath, findHardestWord } from "@/utils/wordSolver";
 import {
@@ -15,9 +15,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import InstructionsModal from "./instructions-modal";
+import CompletionModal from "./completion-modal";
 
 const WordEvolutionGame = () => {
   const validWords = getValidWords();
+
+  // Add state to track if warmup is completed
+  const [isWarmupCompleted, setIsWarmupCompleted] = useState(false);
+
+  // Add new state for endless mode
+  const [isEndlessMode, setIsEndlessMode] = useState(false);
+  const [hasCompletedDaily, setHasCompletedDaily] = useState(false);
 
   // Get a deterministic puzzle based on the current date
   const getDailyPuzzle = () => {
@@ -25,31 +34,73 @@ const WordEvolutionGame = () => {
     const dateString = `${today.getFullYear()}-${
       today.getMonth() + 1
     }-${today.getDate()}`;
-    const puzzles = puzzleData["easy"];
 
-    // Use the date string to create a deterministic index
-    let index = 0;
+    // Create a deterministic but seemingly random number between 0 and 1
+    let randomSeed = 0;
     for (let i = 0; i < dateString.length; i++) {
+      randomSeed += dateString.charCodeAt(i);
+    }
+    randomSeed = (randomSeed % 100) / 100; // Normalize to 0-1
+
+    // Determine word length (50/50 chance)
+    const wordLength = randomSeed < 0.5 ? "fourLetters" : "fiveLetters";
+
+    // Use a different hash of the date for puzzle selection
+    let index = 0;
+    for (let i = dateString.length - 1; i >= 0; i--) {
       index += dateString.charCodeAt(i);
     }
-    return puzzles[index % puzzles.length];
+
+    // Determine difficulty with weighted distribution:
+    // hard: 60%, extreme: 25%, impossible: 15%
+    const difficultyRandom = (index % 100) / 100;
+    console.log(difficultyRandom);
+    let difficulty;
+    if (difficultyRandom < 0.6) {
+      difficulty = "hard";
+    } else if (difficultyRandom < 0.85) {
+      difficulty = "extreme";
+    } else {
+      difficulty = "impossible";
+    }
+
+    // Get puzzles for the selected length and difficulty
+    const puzzlesForLength = puzzleData[wordLength][difficulty];
+
+    // Select a puzzle using the index
+    return {
+      ...puzzlesForLength[index % puzzlesForLength.length],
+      difficulty: difficulty, // Ensure difficulty is included in puzzle object
+    };
   };
 
-  const [currentDifficulty, setCurrentDifficulty] = useState("easy");
-  const [currentPuzzle, setCurrentPuzzle] = useState(getDailyPuzzle());
+  // Get a simple warmup puzzle
+  const getWarmupPuzzle = () => {
+    const warmupPuzzle = getRandomPuzzle(4, "easy");
+    return {
+      ...warmupPuzzle,
+      difficulty: "easy",
+    };
+  };
+
+  // Get initial warmup puzzle
+  const warmupPuzzle = getWarmupPuzzle();
+  const [currentPuzzle, setCurrentPuzzle] = useState(warmupPuzzle);
+  const [currentDifficulty, setCurrentDifficulty] = useState(
+    warmupPuzzle.difficulty
+  );
   const [currentWord, setCurrentWord] = useState("");
   const [previousWords, setPreviousWords] = useState([]);
   const [message, setMessage] = useState("");
   const [moves, setMoves] = useState(0);
   const [showHints, setShowHints] = useState(false);
-  const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(1);
-  const [targetScore, setTargetScore] = useState(1000);
-  const [puzzlesCompleted, setPuzzlesCompleted] = useState(0);
-  const PUZZLES_TO_LEVEL_UP = 1;
-  const [isLevelComplete, setIsLevelComplete] = useState(false);
-  const [nextDifficulty, setNextDifficulty] = useState(null);
-  const [floatingPoints, setFloatingPoints] = useState(null);
+  const [isInvalid, setIsInvalid] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [isShowingSolution, setIsShowingSolution] = useState(false);
+  const [puzzleHistory, setPuzzleHistory] = useState([]);
+  const [isGivenUp, setIsGivenUp] = useState(false);
 
   const pointsSound = new Audio("/sounds/320655__rhodesmas__level-up-01.wav");
   pointsSound.volume = 0.2;
@@ -107,11 +158,17 @@ const WordEvolutionGame = () => {
 
     if (!currentWord?.trim() || currentWord.length !== expectedLength) {
       setMessage("Please fill all letters");
+      setIsInvalid(true);
+      setTimeout(() => setIsInvalid(false), 500); // Reset after animation
       return;
     }
 
-    if (!validWords.has(currentWord)) {
-      setMessage("Not a valid word");
+    // Check if word matches goal word first
+    if (currentWord === currentPuzzle.end) {
+      // Skip valid word check if it matches the goal
+    } else if (!validWords.has(currentWord)) {
+      setIsInvalid(true);
+      setTimeout(() => setIsInvalid(false), 500); // Reset after animation
       return;
     }
 
@@ -137,60 +194,46 @@ const WordEvolutionGame = () => {
 
     // Check for win condition
     if (currentWord === currentPuzzle.end) {
-      const pointsEarned = Math.max(10 - newMoves, 1) * 100;
-      const newPuzzlesCompleted = puzzlesCompleted + 1;
-      setPuzzlesCompleted(newPuzzlesCompleted);
+      pointsSound.currentTime = 0;
+      pointsSound.play().catch((err) => console.log("Audio play failed:", err));
 
-      if (newPuzzlesCompleted >= PUZZLES_TO_LEVEL_UP) {
-        // First: trigger difficulty change
-        const newDifficulty = getNextDifficulty(currentDifficulty);
-        setNextDifficulty(newDifficulty);
+      setPuzzleHistory([
+        ...puzzleHistory,
+        {
+          difficulty: currentDifficulty,
+          moves: newMoves,
+        },
+      ]);
 
-        // Play sound with points animation after difficulty change
-        setTimeout(() => {
-          pointsSound.currentTime = 0;
-          pointsSound
-            .play()
-            .catch((err) => console.log("Audio play failed:", err));
+      if (!isWarmupCompleted) {
+        setIsSuccess(true);
+        setTimeout(() => setIsSuccess(false), 500);
 
-          setFloatingPoints(pointsEarned);
-          setScore(score + pointsEarned);
-
-          setTimeout(() => {
-            setFloatingPoints(null);
-          }, 1000);
-        }, 250);
-
-        // Complete the difficulty change
-        setTimeout(() => {
-          setLevel(level + 1);
-          setCurrentDifficulty(newDifficulty);
-          setTargetScore((prev) => prev * 2);
-          setPuzzlesCompleted(0);
-          setNextDifficulty(null);
-
-          setCurrentPuzzle(
-            getRandomPuzzle(newDifficulty, currentPuzzle.start.length + 1)
-          );
-        }, 500);
-      } else {
-        // Regular puzzle completion
-        pointsSound.currentTime = 0;
-        pointsSound
-          .play()
-          .catch((err) => console.log("Audio play failed:", err));
-
-        setFloatingPoints(pointsEarned);
-        setScore(score + pointsEarned);
+        // Warmup completion logic
+        setIsWarmupCompleted(true);
+        const dailyPuzzle = getDailyPuzzle();
 
         setTimeout(() => {
-          setFloatingPoints(null);
+          setCurrentPuzzle(dailyPuzzle);
+          setCurrentDifficulty(dailyPuzzle.difficulty);
         }, 1000);
-
-        // Use pre-generated puzzle at same difficulty
-        setCurrentPuzzle(
-          getRandomPuzzle(currentDifficulty, currentPuzzle.start.length)
-        );
+      } else if (!hasCompletedDaily && !isEndlessMode) {
+        // Daily puzzle completion - only show modal for daily puzzle
+        setIsSuccess(true);
+        setTimeout(() => {
+          setIsSuccess(false);
+          setHasCompletedDaily(true);
+          if (!isGivenUp) {
+            setShowCompletionModal(true);
+          }
+        }, 500);
+      } else if (isEndlessMode) {
+        // Endless mode - just transition to next puzzle
+        setTimeout(() => {
+          const nextPuzzle = getEndlessPuzzle();
+          setCurrentPuzzle(nextPuzzle);
+          setCurrentDifficulty(nextPuzzle.difficulty);
+        }, 1000);
       }
     } else {
       setMessage("");
@@ -201,9 +244,6 @@ const WordEvolutionGame = () => {
   };
 
   const restartCurrentPuzzle = () => {
-    const pointDeduction = 50; // Deduct 50 points for each reset
-    setScore((prevScore) => Math.max(0, prevScore - pointDeduction)); // Prevent negative scores
-    setMessage(`-${pointDeduction} points for resetting`);
     startNewPuzzle();
   };
 
@@ -273,73 +313,127 @@ const WordEvolutionGame = () => {
 
   // Add a function to handle showing hints with point deduction
   const handleShowHints = () => {
-    if (!showHints) {
-      // Only deduct points when opening hints
-      const pointDeduction = 10;
-      setScore((prevScore) => Math.max(0, prevScore - pointDeduction));
-      setMessage(`-${pointDeduction} points for using hints`);
-    }
     setShowHints(!showHints);
+  };
+
+  const handleGiveUp = () => {
+    setIsGivenUp(true);
+    const solution = findWordPath(
+      currentPuzzle.start,
+      currentPuzzle.end,
+      validWords
+    );
+
+    if (solution.length === 0) {
+      setMessage("No solution found!");
+      return;
+    }
+
+    setIsShowingSolution(true);
+    const path = solution.slice(1);
+
+    path.forEach((word, index) => {
+      setTimeout(() => {
+        setPreviousWords(path.slice(0, index + 1));
+      }, index * 500);
+    });
+
+    // Only show completion modal if not in endless mode
+    if (!isEndlessMode) {
+      setTimeout(() => {
+        setShowCompletionModal(true);
+        setIsShowingSolution(false); // Reset for next puzzle
+      }, path.length * 700);
+    } else {
+      // In endless mode, just move to next puzzle after showing solution
+      setTimeout(() => {
+        setIsShowingSolution(false);
+        const nextPuzzle = getEndlessPuzzle();
+        setCurrentPuzzle(nextPuzzle);
+        setCurrentDifficulty(nextPuzzle.difficulty);
+      }, path.length * 500);
+    }
+
+    setCurrentWord(" ".repeat(currentPuzzle.start.length));
+    setMoves(path.length);
+  };
+
+  // Add function to get random endless puzzle
+  const getEndlessPuzzle = () => {
+    // Randomly choose word length (4 or 5)
+    const wordLength = Math.random() < 0.5 ? 4 : 5;
+
+    // Random difficulty with weighted distribution
+    const difficultyRoll = Math.random();
+    let difficulty;
+    if (difficultyRoll < 0.6) {
+      difficulty = "hard";
+    } else if (difficultyRoll < 0.85) {
+      difficulty = "extreme";
+    } else {
+      difficulty = "impossible";
+    }
+
+    const puzzle = getRandomPuzzle(wordLength, difficulty);
+    return {
+      ...puzzle,
+      difficulty: difficulty,
+    };
+  };
+
+  // Modify startEndlessMode to use random puzzle
+  const startEndlessMode = () => {
+    setIsEndlessMode(true);
+    setShowCompletionModal(false);
+    const newPuzzle = getEndlessPuzzle();
+    setCurrentPuzzle(newPuzzle);
+    setCurrentDifficulty(newPuzzle.difficulty);
   };
 
   return (
     <div className="max-w-md mx-auto p-4 space-y-4">
       <div className="text-center">
         <div className="mb-8">
-          <h1 className="relative inline-block transform -skew-x-12 hover:skew-x-0 transition-transform duration-300">
-            <span className="text-5xl font-extrabold tracking-tight bg-clip-text text-black">
-              Word Escalator
-            </span>
-          </h1>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="relative inline-block transform -skew-x-12 hover:skew-x-0 transition-transform duration-300">
+              <span className="text-5xl font-extrabold tracking-tight bg-clip-text text-black">
+                Word Escalator
+              </span>
+            </h1>
+          </div>
         </div>
         <div className="space-y-6">
           <div className="flex justify-between items-center px-4 py-3 bg-gray-50 rounded-lg shadow-sm">
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowInstructions(true)}
+                className="p-2 text-gray-500 hover:text-gray-700"
+              >
+                <Info size={20} />
+              </button>
               <span className="text-sm text-gray-500 uppercase tracking-wider">
-                DIFFICULTY:
+                {!isWarmupCompleted
+                  ? "WARMUP"
+                  : isEndlessMode
+                  ? "ENDLESS MODE"
+                  : "DAILY PUZZLE"}
               </span>
-              <div className="relative h-8">
-                <span
-                  className={`absolute text-xl font-semibold capitalize transition-all
-                  ${nextDifficulty ? "animate-slide-up-out" : ""}
-                  ${
-                    currentDifficulty === "easy"
-                      ? "text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-green-600"
-                      : currentDifficulty === "medium"
-                      ? "text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600"
-                      : "text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600"
-                  }`}
-                >
-                  {currentDifficulty === "easy" ? "warmup" : currentDifficulty}
-                </span>
-                {nextDifficulty && (
-                  <span
-                    className={`absolute text-xl font-semibold capitalize transition-all animate-slide-up-in
-                    ${
-                      nextDifficulty === "easy"
-                        ? "text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-green-600"
-                        : nextDifficulty === "medium"
-                        ? "text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600"
-                        : "text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600"
-                    }`}
-                  >
-                    {nextDifficulty === "easy" ? "warmup" : nextDifficulty}
-                  </span>
-                )}
-              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500 uppercase tracking-wider">
-                SCORE:
-              </span>
-              <div className="relative">
-                <span className="text-xl font-semibold">{score}</span>
-                {floatingPoints && (
-                  <span className="absolute left-0 -top-2 text-green-500 font-bold animate-float-up">
-                    +{floatingPoints}
-                  </span>
-                )}
-              </div>
+            <div
+              className={`
+              px-3 py-1 rounded-full text-sm font-medium
+              ${
+                currentDifficulty === "easy"
+                  ? "bg-green-100 text-green-800"
+                  : currentDifficulty === "hard"
+                  ? "bg-red-100 text-red-800"
+                  : currentDifficulty === "extreme"
+                  ? "bg-purple-100 text-purple-800"
+                  : "bg-gray-900 text-white"
+              }
+            `}
+            >
+              {currentDifficulty.toUpperCase()}
             </div>
           </div>
           <div className="flex items-center justify-center gap-4 text-3xl font-bold">
@@ -350,28 +444,44 @@ const WordEvolutionGame = () => {
         </div>
       </div>
 
+      <InstructionsModal
+        open={showInstructions}
+        onOpenChange={setShowInstructions}
+      />
+
       <div className="bg-gray-100 p-4 rounded-lg">
         <div className="flex flex-col gap-2">
-          {[currentPuzzle.start, ...previousWords].map((word, index) => (
-            <div key={index} className="flex justify-center gap-2">
+          {[currentPuzzle.start, ...previousWords].map((word, wordIndex) => (
+            <div
+              key={`${word}-${wordIndex}`}
+              className={`
+                flex justify-center gap-2
+                ${wordIndex > 0 && isShowingSolution ? "animate-slide-in" : ""}
+              `}
+            >
               {word.split("").map((letter, letterIndex) => {
                 const prevWord =
-                  index > 0
-                    ? [currentPuzzle.start, ...previousWords][index - 1]
-                    : null;
-                const isChanged = prevWord && prevWord[letterIndex] !== letter;
+                  wordIndex > 0
+                    ? previousWords[wordIndex - 1]
+                    : currentPuzzle.start;
+                const isChanged = prevWord[letterIndex] !== letter;
+                const isLastWord = wordIndex === previousWords.length;
 
                 return (
                   <div
-                    key={letterIndex}
-                    className={`w-12 h-12 flex items-center justify-center text-xl font-bold rounded border-2 
-                    ${
-                      word === currentPuzzle.end
-                        ? "bg-green-100 border-green-500"
-                        : isChanged
-                        ? "bg-yellow-100 border-yellow-500"
-                        : "bg-white border-gray-300"
-                    }`}
+                    key={`${letter}-${letterIndex}-${wordIndex}`}
+                    className={`
+                      w-12 h-12 
+                      flex items-center justify-center 
+                      text-xl font-bold rounded border-2
+                      transition-all duration-500
+                      ${
+                        isChanged
+                          ? "bg-yellow-100 border-yellow-500"
+                          : "bg-white border-gray-300"
+                      }
+                      ${isLastWord && isSuccess ? "animate-success-bounce" : ""}
+                    `}
                   >
                     {letter}
                   </div>
@@ -381,7 +491,11 @@ const WordEvolutionGame = () => {
           ))}
 
           {previousWords[previousWords.length - 1] !== currentPuzzle.end && (
-            <div className="flex justify-center gap-2">
+            <div
+              className={`flex justify-center gap-2 ${
+                isInvalid ? "animate-shake" : ""
+              }`}
+            >
               {Array(currentPuzzle.start.length)
                 .fill("")
                 .map((_, letterIndex) => {
@@ -390,7 +504,7 @@ const WordEvolutionGame = () => {
                       ? previousWords[previousWords.length - 1]
                       : currentPuzzle.start;
 
-                  // Only highlight if this is the single different character AND the current letter isn't empty
+                  // Count total differences
                   const currentDifferences = lastWord
                     .split("")
                     .reduce((count, letter, i) => {
@@ -404,11 +518,19 @@ const WordEvolutionGame = () => {
                       );
                     }, 0);
 
-                  const isOnlyDifference =
+                  // Check if this letter is different
+                  const isDifferent =
                     currentWord[letterIndex] &&
                     currentWord[letterIndex] !== " " &&
-                    currentWord[letterIndex] !== lastWord[letterIndex] &&
-                    currentDifferences === 1;
+                    currentWord[letterIndex] !== lastWord[letterIndex];
+
+                  // Determine the highlighting style
+                  const highlightStyle =
+                    isDifferent && currentDifferences === 1
+                      ? "bg-yellow-100 border-yellow-500"
+                      : isDifferent && currentDifferences > 1
+                      ? "bg-red-100 border-red-500"
+                      : "border-gray-300";
 
                   return (
                     <input
@@ -438,11 +560,8 @@ const WordEvolutionGame = () => {
                         }
                       }}
                       className={`w-12 h-12 text-center text-xl font-bold rounded border-2 
-                        ${
-                          isOnlyDifference
-                            ? "bg-yellow-100 border-yellow-500"
-                            : "border-gray-300"
-                        }`}
+                        ${highlightStyle}
+                        ${isInvalid ? "bg-red-50 border-red-500" : ""}`}
                       maxLength={1}
                       data-index={letterIndex}
                       autoComplete="off"
@@ -491,6 +610,21 @@ const WordEvolutionGame = () => {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={handleGiveUp}
+                className="p-2 bg-red-200 rounded hover:bg-red-300"
+              >
+                🏳️
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Give up</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {showHints && (
@@ -526,6 +660,18 @@ const WordEvolutionGame = () => {
           <li>Reach the target word in the fewest moves</li>
         </ol>
       </div>
+
+      <CompletionModal
+        open={showCompletionModal}
+        currentPuzzle={currentPuzzle}
+        onOpenChange={setShowCompletionModal}
+        moves={moves}
+        difficulty={currentDifficulty}
+        puzzleHistory={puzzleHistory}
+        isGivenUp={isGivenUp}
+        onStartEndless={startEndlessMode}
+        hasCompletedDaily={hasCompletedDaily}
+      />
     </div>
   );
 };

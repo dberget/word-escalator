@@ -24,11 +24,33 @@ export default {
           "80%": { transform: "translateY(-2rem)", opacity: "1" },
           "100%": { transform: "translateY(-3rem)", opacity: "0" },
         },
+        shake: {
+          "0%, 100%": { transform: "translateX(0)" },
+          "25%": { transform: "translateX(-4px)" },
+          "75%": { transform: "translateX(4px)" },
+        },
+        "slide-in": {
+          "0%": { transform: "translateX(-5%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        "success-bounce": {
+          "0%, 100%": {
+            // transform: "translateY(0)",
+            backgroundColor: "rgb(220 252 231)",
+          }, // green-100
+          "50%": {
+            // transform: "translateY(-4px)",
+            backgroundColor: "rgb(134 239 172)",
+          }, // green-300
+        },
       },
       animation: {
         "slide-up-out": "slide-up-out 0.5s ease-in-out forwards",
         "slide-up-in": "slide-up-in 0.5s ease-in-out forwards",
         "float-up": "float-up 1s ease-out forwards",
+        shake: "shake 0.3s ease-in-out",
+        "success-bounce": "success-bounce 0.5s ease-in-out",
+        "slide-in": "slide-in 0.3s ease-out forwards",
       },
       colors: {
         background: "hsl(var(--background))",
