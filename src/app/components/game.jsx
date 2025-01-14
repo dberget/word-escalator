@@ -260,9 +260,13 @@ const WordEvolutionGame = () => {
   };
 
   const nextEndlessPuzzle = () => {
-    const nextPuzzle = getEndlessPuzzle();
-    setCurrentPuzzle(nextPuzzle);
-    setCurrentDifficulty(nextPuzzle.difficulty);
+    if (!isEndlessMode) {
+      startEndlessMode();
+    } else {
+      const nextPuzzle = getEndlessPuzzle();
+      setCurrentPuzzle(nextPuzzle);
+      setCurrentDifficulty(nextPuzzle.difficulty);
+    }
   };
 
   const restartCurrentPuzzle = () => {
@@ -364,6 +368,7 @@ const WordEvolutionGame = () => {
 
   // Modify startEndlessMode to use random puzzle
   const startEndlessMode = () => {
+    setIsWarmupCompleted(true);
     setIsEndlessMode(true);
     setShowCompletionModal(false);
     const newPuzzle = getEndlessPuzzle();

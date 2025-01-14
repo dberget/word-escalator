@@ -58,7 +58,7 @@ export const puzzleData = {
                 "end": "OINK",
                 "moves": 2
             },
-           
+
             {
                 "start": "PEEP",
                 "end": "REEK",
@@ -69,7 +69,7 @@ export const puzzleData = {
                 "end": "LAZY",
                 "moves": 2
             },
-          
+
             {
                 "start": "MITE",
                 "end": "MATH",
@@ -80,7 +80,7 @@ export const puzzleData = {
                 "end": "PLOP",
                 "moves": 2
             },
-           
+
             {
                 "start": "ROSE",
                 "end": "LOSS",
@@ -106,7 +106,7 @@ export const puzzleData = {
                 "end": "LACK",
                 "moves": 2
             },
-           
+
             {
                 "start": "SPIN",
                 "end": "THIN",
@@ -132,7 +132,7 @@ export const puzzleData = {
                 "end": "BEND",
                 "moves": 2
             },
-          
+
             {
                 "start": "JEEP",
                 "end": "SEER",
@@ -158,7 +158,7 @@ export const puzzleData = {
                 "end": "DOME",
                 "moves": 2
             },
-          
+
             {
                 "start": "RATE",
                 "end": "PATH",
@@ -189,7 +189,7 @@ export const puzzleData = {
                 "end": "HALE",
                 "moves": 2
             },
-          
+
             {
                 "start": "SLAW",
                 "end": "SHAH",
@@ -205,7 +205,7 @@ export const puzzleData = {
                 "end": "SPIN",
                 "moves": 2
             },
-           
+
             {
                 "start": "LIED",
                 "end": "DIET",
@@ -226,7 +226,7 @@ export const puzzleData = {
                 "end": "LAWS",
                 "moves": 2
             },
-           
+
             {
                 "start": "SCUM",
                 "end": "SCAB",
@@ -242,7 +242,7 @@ export const puzzleData = {
                 "end": "WARE",
                 "moves": 2
             },
-         
+
             {
                 "start": "ZEST",
                 "end": "PSST",
@@ -319,13 +319,13 @@ export const puzzleData = {
                 "end": "LIMO",
                 "moves": 2
             },
-           
+
             {
                 "start": "PULL",
                 "end": "GILL",
                 "moves": 2
             },
-          
+
             {
                 "start": "PEAK",
                 "end": "PACK",
@@ -341,7 +341,7 @@ export const puzzleData = {
                 "end": "FRET",
                 "moves": 2
             },
-          
+
             {
                 "start": "EARS",
                 "end": "BASS",
@@ -432,7 +432,7 @@ export const puzzleData = {
                 "end": "JETS",
                 "moves": 2
             },
-            
+
             {
                 "start": "SPOT",
                 "end": "SKIT",
@@ -463,7 +463,7 @@ export const puzzleData = {
                 "end": "DOTE",
                 "moves": 2
             },
-           
+
             {
                 "start": "DIGS",
                 "end": "DIED",
@@ -519,7 +519,7 @@ export const puzzleData = {
                 "end": "BRED",
                 "moves": 2
             },
-         
+
             {
                 "start": "BEAK",
                 "end": "BEER",
@@ -545,13 +545,13 @@ export const puzzleData = {
                 "end": "HALL",
                 "moves": 2
             },
-            
+
             {
                 "start": "SHIP",
                 "end": "SNAP",
                 "moves": 2
             },
-           
+
             {
                 "start": "COOP",
                 "end": "COMA",
@@ -567,15 +567,15 @@ export const puzzleData = {
                 "end": "BALD",
                 "moves": 2
             },
-           
-           
+
+
             {
                 "start": "VAIL",
                 "end": "BAIT",
                 "moves": 2
             },
 
-         
+
             {
                 "start": "ROTS",
                 "end": "PETS",
@@ -601,7 +601,7 @@ export const puzzleData = {
                 "end": "ROPE",
                 "moves": 2
             },
-           
+
             {
                 "start": "TORN",
                 "end": "COON",
@@ -617,7 +617,7 @@ export const puzzleData = {
                 "end": "HEAP",
                 "moves": 2
             },
-         
+
             {
                 "start": "LEAD",
                 "end": "HEAL",
@@ -683,7 +683,7 @@ export const puzzleData = {
                 "end": "CELL",
                 "moves": 2
             },
-         
+
             {
                 "start": "FITS",
                 "end": "BUTS",
@@ -724,7 +724,7 @@ export const puzzleData = {
                 "end": "VASE",
                 "moves": 2
             },
-          
+
             {
                 "start": "BALE",
                 "end": "MADE",
@@ -755,13 +755,13 @@ export const puzzleData = {
                 "end": "HECK",
                 "moves": 2
             },
-           
+
             {
                 "start": "RUBS",
                 "end": "BUNS",
                 "moves": 2
             },
-           
+
             {
                 "start": "BULL",
                 "end": "PILL",
@@ -792,7 +792,7 @@ export const puzzleData = {
                 "end": "HALE",
                 "moves": 2
             },
-           
+
             {
                 "start": "MESS",
                 "end": "MAGS",
@@ -818,7 +818,7 @@ export const puzzleData = {
                 "end": "PIKE",
                 "moves": 2
             },
-           
+
             {
                 "start": "FITS",
                 "end": "WITH",
@@ -859,7 +859,7 @@ export const puzzleData = {
                 "end": "TARP",
                 "moves": 2
             },
-           
+
             {
                 "start": "FRAT",
                 "end": "BRAG",
@@ -870,7 +870,7 @@ export const puzzleData = {
                 "end": "ROWS",
                 "moves": 2
             },
-           
+
             {
                 "start": "JAKE",
                 "end": "MACE",
@@ -881,8 +881,8 @@ export const puzzleData = {
                 "end": "SHED",
                 "moves": 2
             },
-            
-           
+
+
             {
                 "start": "TEAR",
                 "end": "HEAP",
@@ -893,7 +893,7 @@ export const puzzleData = {
                 "end": "FOOL",
                 "moves": 2
             },
-          
+
             {
                 "start": "HOLD",
                 "end": "BOND",
@@ -929,7 +929,7 @@ export const puzzleData = {
                 "end": "MALE",
                 "moves": 2
             },
-         
+
             {
                 "start": "YANG",
                 "end": "RING",
@@ -945,7 +945,7 @@ export const puzzleData = {
                 "end": "GETS",
                 "moves": 2
             },
-         
+
             {
                 "start": "LOCK",
                 "end": "ROOK",
@@ -966,7 +966,7 @@ export const puzzleData = {
                 "end": "LANE",
                 "moves": 2
             },
-          
+
             {
                 "start": "BONE",
                 "end": "TUNE",
@@ -1077,7 +1077,7 @@ export const puzzleData = {
                 "end": "RISK",
                 "moves": 2
             },
-           
+
             {
                 "start": "CART",
                 "end": "CANE",
@@ -1183,15 +1183,15 @@ export const puzzleData = {
                 "end": "SIFT",
                 "moves": 2
             },
-           
-          
-           
+
+
+
             {
                 "start": "STUD",
                 "end": "STAB",
                 "moves": 2
             },
-           
+
             {
                 "start": "LUMP",
                 "end": "PIMP",
@@ -1207,7 +1207,7 @@ export const puzzleData = {
                 "end": "VENT",
                 "moves": 2
             },
-         
+
             {
                 "start": "FULL",
                 "end": "DELL",
@@ -1233,13 +1233,13 @@ export const puzzleData = {
                 "end": "RICK",
                 "moves": 2
             },
-           
+
             {
                 "start": "FAME",
                 "end": "DAMN",
                 "moves": 2
             },
-          
+
             {
                 "start": "WILL",
                 "end": "MOLL",
@@ -65640,20 +65640,20 @@ export const puzzleData = {
                 "end": "CROAK",
                 "moves": 2
             },
-           
+
             {
                 "start": "HOOKS",
                 "end": "HOCUS",
                 "moves": 2
             },
-           
-           
+
+
             {
                 "start": "BOOTS",
                 "end": "KOOKS",
                 "moves": 2
             },
-           
+
             {
                 "start": "STEEP",
                 "end": "SPEED",
@@ -65664,7 +65664,7 @@ export const puzzleData = {
                 "end": "FOLKS",
                 "moves": 2
             },
-          
+
             {
                 "start": "DANCE",
                 "end": "NANCY",
@@ -65680,7 +65680,7 @@ export const puzzleData = {
                 "end": "SPIEL",
                 "moves": 2
             },
-          
+
             {
                 "start": "SWINE",
                 "end": "SPIKE",
@@ -65691,7 +65691,7 @@ export const puzzleData = {
                 "end": "FACES",
                 "moves": 2
             },
-          
+
             {
                 "start": "ROBES",
                 "end": "POSES",
@@ -65722,8 +65722,8 @@ export const puzzleData = {
                 "end": "BUSTY",
                 "moves": 2
             },
-           
-         
+
+
             {
                 "start": "PUNKS",
                 "end": "HUNKY",
@@ -65734,19 +65734,19 @@ export const puzzleData = {
                 "end": "SEARS",
                 "moves": 2
             },
-           
+
             {
                 "start": "NOSES",
                 "end": "POSTS",
                 "moves": 2
             },
-           
+
             {
                 "start": "CAGES",
                 "end": "CARBS",
                 "moves": 2
             },
-           
+
             {
                 "start": "CASTS",
                 "end": "PANTS",
@@ -65873,7 +65873,7 @@ export const puzzleData = {
                 "end": "TAMMY",
                 "moves": 2
             },
-            
+
             {
                 "start": "BONUS",
                 "end": "BOXES",
@@ -65889,7 +65889,7 @@ export const puzzleData = {
                 "end": "DEVON",
                 "moves": 2
             },
-           
+
             {
                 "start": "LIMEY",
                 "end": "LIMPS",
@@ -65905,7 +65905,7 @@ export const puzzleData = {
                 "end": "WORMS",
                 "moves": 2
             },
-          
+
             {
                 "start": "TORCH",
                 "end": "TOUGH",
@@ -65916,7 +65916,7 @@ export const puzzleData = {
                 "end": "THICK",
                 "moves": 2
             },
-         
+
             {
                 "start": "SWEEP",
                 "end": "TWEET",
@@ -65977,13 +65977,13 @@ export const puzzleData = {
                 "end": "LEAKS",
                 "moves": 2
             },
-           
+
             {
                 "start": "BAKES",
                 "end": "MALES",
                 "moves": 2
             },
-          
+
             {
                 "start": "FLIPS",
                 "end": "FLAWS",
@@ -65999,7 +65999,7 @@ export const puzzleData = {
                 "end": "WHALE",
                 "moves": 2
             },
-         
+
             {
                 "start": "PLOTS",
                 "end": "SLUTS",
@@ -66025,7 +66025,7 @@ export const puzzleData = {
                 "end": "CLASP",
                 "moves": 2
             },
-           
+
             {
                 "start": "STAFF",
                 "end": "SCUFF",
@@ -66036,7 +66036,7 @@ export const puzzleData = {
                 "end": "HEATS",
                 "moves": 2
             },
-          
+
             {
                 "start": "TOLLS",
                 "end": "DILLS",
@@ -66047,7 +66047,7 @@ export const puzzleData = {
                 "end": "LIVED",
                 "moves": 2
             },
-           
+
             {
                 "start": "PACES",
                 "end": "TACKS",
@@ -66073,7 +66073,7 @@ export const puzzleData = {
                 "end": "HEELS",
                 "moves": 2
             },
-           
+
             {
                 "start": "BLAND",
                 "end": "GRAND",
@@ -66103,10 +66103,6 @@ export const puzzleData = {
                 "start": "BLAND",
                 "end": "BRAID",
                 "moves": 2
-            }, {
-                "start": "LEAKY",
-                "end": "LEAKS",
-                "moves": 1
             },
             {
                 "start": "THANK",
