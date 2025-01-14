@@ -247,11 +247,7 @@ const WordEvolutionGame = () => {
         // Endless mode - just transition to next puzzle
         setIsSuccess(true);
         setTimeout(() => {
-          setIsSuccess(false);
-
-          const nextPuzzle = getEndlessPuzzle();
-          setCurrentPuzzle(nextPuzzle);
-          setCurrentDifficulty(nextPuzzle.difficulty);
+          nextEndlessPuzzle();
         }, 1000);
       }
     } else {
@@ -260,6 +256,12 @@ const WordEvolutionGame = () => {
       const firstInput = document.querySelector('input[data-index="0"]');
       firstInput?.focus();
     }
+  };
+
+  const nextEndlessPuzzle = () => {
+    const nextPuzzle = getEndlessPuzzle();
+    setCurrentPuzzle(nextPuzzle);
+    setCurrentDifficulty(nextPuzzle.difficulty);
   };
 
   const restartCurrentPuzzle = () => {
@@ -365,12 +367,6 @@ const WordEvolutionGame = () => {
       }, path.length * 700);
     } else {
       // In endless mode, just move to next puzzle after showing solution
-      setTimeout(() => {
-        setIsShowingSolution(false);
-        const nextPuzzle = getEndlessPuzzle();
-        setCurrentPuzzle(nextPuzzle);
-        setCurrentDifficulty(nextPuzzle.difficulty);
-      }, path.length * 500);
     }
 
     setCurrentWord(" ".repeat(currentPuzzle.start.length));
@@ -611,12 +607,22 @@ const WordEvolutionGame = () => {
         </div>
 
         <div className="flex gap-2">
-          <button
-            onClick={handleSubmit}
-            className="flex-1 bg-blue-500 text-white p-2 rounded hover:bg-blue-600 font-medium"
-          >
-            Submit
-          </button>
+          {!isShowingSolution && (
+            <button
+              onClick={handleSubmit}
+              className="flex-1 bg-blue-500 text-white p-2 rounded hover:bg-blue-600 font-medium"
+            >
+              Submit
+            </button>
+          )}
+          {isShowingSolution && (
+            <button
+              onClick={() => nextEndlessPuzzle()}
+              className="flex-1 bg-blue-500 text-white p-2 rounded hover:bg-blue-600 font-medium"
+            >
+              Next Puzzle
+            </button>
+          )}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
