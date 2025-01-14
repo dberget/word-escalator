@@ -674,11 +674,7 @@ export const puzzleData = {
                 "end": "BAIT",
                 "moves": 2
             },
-            {
-                "start": "PORN",
-                "end": "POUT",
-                "moves": 2
-            },
+
             {
                 "start": "RULE",
                 "end": "ROLE",
@@ -2854,11 +2850,7 @@ export const puzzleData = {
                 "end": "LICE",
                 "moves": 4
             },
-            {
-                "start": "PORN",
-                "end": "SOLE",
-                "moves": 3
-            },
+
             {
                 "start": "OILS",
                 "end": "BIDS",
@@ -7451,11 +7443,7 @@ export const puzzleData = {
                 "end": "SCOW",
                 "moves": 3
             },
-            {
-                "start": "PORN",
-                "end": "BALK",
-                "moves": 4
-            },
+
             {
                 "start": "JAKE",
                 "end": "NOSE",
@@ -8401,11 +8389,7 @@ export const puzzleData = {
                 "end": "RUNG",
                 "moves": 4
             },
-            {
-                "start": "RAGE",
-                "end": "PORN",
-                "moves": 4
-            },
+
             {
                 "start": "BEAR",
                 "end": "HELL",
@@ -8836,11 +8820,7 @@ export const puzzleData = {
                 "end": "JAGS",
                 "moves": 4
             },
-            {
-                "start": "PACE",
-                "end": "PORN",
-                "moves": 3
-            },
+
             {
                 "start": "WORE",
                 "end": "CAMP",
@@ -10166,11 +10146,7 @@ export const puzzleData = {
                 "end": "MOCK",
                 "moves": 3
             },
-            {
-                "start": "WARM",
-                "end": "PORN",
-                "moves": 3
-            },
+
             {
                 "start": "YANG",
                 "end": "CONE",
@@ -11191,11 +11167,7 @@ export const puzzleData = {
                 "end": "MERE",
                 "moves": 3
             },
-            {
-                "start": "YOUR",
-                "end": "PORN",
-                "moves": 4
-            },
+
             {
                 "start": "WONT",
                 "end": "KIND",
@@ -19535,11 +19507,7 @@ export const puzzleData = {
                 "end": "GANG",
                 "moves": 6
             },
-            {
-                "start": "HEAL",
-                "end": "PORN",
-                "moves": 5
-            },
+
             {
                 "start": "FURY",
                 "end": "HISS",
@@ -27677,11 +27645,7 @@ export const puzzleData = {
                 "end": "BONY",
                 "moves": 5
             },
-            {
-                "start": "SHAT",
-                "end": "PORN",
-                "moves": 5
-            },
+
             {
                 "start": "EASY",
                 "end": "GASP",
@@ -28852,11 +28816,7 @@ export const puzzleData = {
                 "end": "LAWN",
                 "moves": 5
             },
-            {
-                "start": "PORN",
-                "end": "GIVE",
-                "moves": 5
-            },
+
             {
                 "start": "BIAS",
                 "end": "CURE",
@@ -36046,11 +36006,7 @@ export const puzzleData = {
                 "end": "POUR",
                 "moves": 6
             },
-            {
-                "start": "SLAW",
-                "end": "PORN",
-                "moves": 6
-            },
+
             {
                 "start": "WHET",
                 "end": "GLOW",
@@ -36746,11 +36702,7 @@ export const puzzleData = {
                 "end": "YANK",
                 "moves": 5
             },
-            {
-                "start": "PORN",
-                "end": "FEDS",
-                "moves": 6
-            },
+
             {
                 "start": "POOL",
                 "end": "LOAD",
@@ -37446,11 +37398,7 @@ export const puzzleData = {
                 "end": "FLOP",
                 "moves": 6
             },
-            {
-                "start": "PORN",
-                "end": "CAPO",
-                "moves": 5
-            },
+
             {
                 "start": "YIPE",
                 "end": "LURE",
@@ -39126,11 +39074,7 @@ export const puzzleData = {
                 "end": "PANS",
                 "moves": 5
             },
-            {
-                "start": "SKID",
-                "end": "PORN",
-                "moves": 6
-            },
+
             {
                 "start": "HYPO",
                 "end": "GONE",
@@ -43037,11 +42981,7 @@ export const puzzleData = {
                 "end": "CULT",
                 "moves": 6
             },
-            {
-                "start": "SHIP",
-                "end": "PORN",
-                "moves": 5
-            },
+
             {
                 "start": "DARK",
                 "end": "JOBS",
@@ -55017,11 +54957,7 @@ export const puzzleData = {
                 "end": "FOUL",
                 "moves": 7
             },
-            {
-                "start": "REDO",
-                "end": "PORN",
-                "moves": 7
-            },
+
             {
                 "start": "BABU",
                 "end": "FREE",
@@ -62351,11 +62287,7 @@ export const puzzleData = {
                 "end": "YAWN",
                 "moves": 7
             },
-            {
-                "start": "PORN",
-                "end": "ANTS",
-                "moves": 9
-            },
+
             {
                 "start": "STEW",
                 "end": "BACH",
@@ -66093,11 +66025,7 @@ export const puzzleData = {
                 "end": "BARRE",
                 "moves": 2
             },
-            {
-                "start": "LATCH",
-                "end": "BITCH",
-                "moves": 2
-            },
+
             {
                 "start": "WATER",
                 "end": "ESTER",
@@ -104616,11 +104544,7 @@ export const puzzleData = {
                 "end": "STAND",
                 "moves": 13
             },
-            {
-                "start": "BITCH",
-                "end": "PARIS",
-                "moves": 17
-            },
+
             {
                 "start": "FAXED",
                 "end": "SWORD",
@@ -104631,11 +104555,7 @@ export const puzzleData = {
                 "end": "SCOTS",
                 "moves": 11
             },
-            {
-                "start": "THINE",
-                "end": "BITCH",
-                "moves": 14
-            },
+
             {
                 "start": "LIKED",
                 "end": "TOOTH",
@@ -112834,11 +112754,7 @@ export const puzzleData = {
                 "end": "JOINT",
                 "moves": 11
             },
-            {
-                "start": "BITCH",
-                "end": "ANISE",
-                "moves": 19
-            },
+
             {
                 "start": "GROIN",
                 "end": "HAVEN",
@@ -117676,11 +117592,7 @@ export const puzzleData = {
                 "end": "JERRY",
                 "moves": 11
             },
-            {
-                "start": "BITCH",
-                "end": "HARMS",
-                "moves": 19
-            },
+
             {
                 "start": "ROGER",
                 "end": "GRIND",
@@ -124871,11 +124783,7 @@ export const puzzleData = {
                 "end": "FRAIL",
                 "moves": 15
             },
-            {
-                "start": "POISE",
-                "end": "BITCH",
-                "moves": 17
-            },
+
             {
                 "start": "DIMES",
                 "end": "STUNG",
@@ -126851,11 +126759,7 @@ export const puzzleData = {
                 "end": "VERGE",
                 "moves": 22
             },
-            {
-                "start": "BITCH",
-                "end": "BULLY",
-                "moves": 17
-            },
+
             {
                 "start": "WORSE",
                 "end": "BLOWS",
