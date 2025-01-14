@@ -247,6 +247,7 @@ const WordEvolutionGame = () => {
         // Endless mode - just transition to next puzzle
         setIsSuccess(true);
         setTimeout(() => {
+          setIsSuccess(false);
           nextEndlessPuzzle();
         }, 1000);
       }
@@ -296,42 +297,6 @@ const WordEvolutionGame = () => {
       })
       .slice(0, 10); // Still keep only 10 results, but now they're the most relevant ones
   };
-
-  const handleSolve = () => {
-    const solution = findWordPath(
-      currentPuzzle.start,
-      currentPuzzle.end,
-      validWords
-    );
-
-    if (solution.length === 0) {
-      setMessage("No solution found!");
-      return;
-    }
-
-    // Remove the start word since it's already shown
-    const path = solution.slice(1);
-    setPreviousWords(path);
-    setCurrentWord(" ".repeat(currentPuzzle.start.length));
-    setMoves(path.length);
-    setMessage(`Solution found in ${path.length} moves!`);
-  };
-
-  const handleFindHardest = () => {
-    const startWord = currentPuzzle.start;
-    const result = findHardestWord(startWord, validWords);
-
-    setMessage(
-      `Hardest reachable word from ${startWord} is "${result.word}" ` +
-        `(${result.distance} moves)`
-    );
-
-    // Optionally show the path
-    setPreviousWords(result.path.slice(1));
-    setCurrentWord(" ".repeat(startWord.length));
-    setMoves(result.distance);
-  };
-
   // Add a function to handle showing hints with point deduction
   const handleShowHints = () => {
     setShowHints(!showHints);
@@ -378,21 +343,22 @@ const WordEvolutionGame = () => {
     // Randomly choose word length (4 or 5)
     const wordLength = Math.random() < 0.5 ? 4 : 5;
 
-    // Random difficulty with weighted distribution
-    const difficultyRoll = Math.random();
-    let difficulty;
-    if (difficultyRoll < 0.6) {
-      difficulty = "hard";
-    } else if (difficultyRoll < 0.85) {
-      difficulty = "extreme";
-    } else {
-      difficulty = "impossible";
-    }
+    // // Random difficulty with weighted distribution
+    // const difficultyRoll = Math.random();
+    // let difficulty;
+    // if (difficultyRoll < 0.6) {
+    //   difficulty = "hard";
+    // } else if (difficultyRoll < 0.85) {
+    //   difficulty = "extreme";
+    // } else {
+    //   difficulty = "impossible";
+    // }
 
-    const puzzle = getRandomPuzzle(wordLength, difficulty);
+    const puzzle = getRandomPuzzle(wordLength, currentDifficulty);
+
     return {
       ...puzzle,
-      difficulty: difficulty,
+      difficulty: currentDifficulty,
     };
   };
 
@@ -403,6 +369,23 @@ const WordEvolutionGame = () => {
     const newPuzzle = getEndlessPuzzle();
     setCurrentPuzzle(newPuzzle);
     setCurrentDifficulty(newPuzzle.difficulty);
+  };
+
+  const handleDifficultyClick = () => {
+    if (!isEndlessMode) return; // Only work in endless mode
+
+    const nextDifficulty = getNextDifficulty(currentDifficulty);
+    setCurrentDifficulty(nextDifficulty);
+
+    // Get a new puzzle with the selected difficulty
+    const newPuzzle = getRandomPuzzle(
+      currentPuzzle.start.length,
+      nextDifficulty
+    );
+    setCurrentPuzzle({
+      ...newPuzzle,
+      difficulty: nextDifficulty,
+    });
   };
 
   if (!currentPuzzle) {
@@ -453,18 +436,20 @@ const WordEvolutionGame = () => {
                 </span>
               </div>
               <div
+                onClick={handleDifficultyClick}
                 className={`
-              px-3 py-1 rounded-full text-sm font-medium
-              ${
-                currentDifficulty === "easy"
-                  ? "bg-green-100 text-green-800"
-                  : currentDifficulty === "hard"
-                  ? "bg-red-100 text-red-800"
-                  : currentDifficulty === "extreme"
-                  ? "bg-purple-100 text-purple-800"
-                  : "bg-gray-900 text-white"
-              }
-            `}
+                px-3 py-1 rounded-full text-sm font-medium
+                ${
+                  currentDifficulty === "easy"
+                    ? "bg-green-100 text-green-800"
+                    : currentDifficulty === "hard"
+                    ? "bg-red-100 text-red-800"
+                    : currentDifficulty === "extreme"
+                    ? "bg-purple-100 text-purple-800"
+                    : "bg-gray-900 text-white"
+                }
+                ${isEndlessMode ? "cursor-pointer hover:opacity-80" : ""}
+              `}
               >
                 {currentDifficulty.toUpperCase()}
               </div>
