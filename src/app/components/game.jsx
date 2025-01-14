@@ -402,28 +402,29 @@ const WordEvolutionGame = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 space-y-4">
-      <div className="text-center">
-        <div className="mb-8">
-          <div className="flex items-center justify-center gap-2">
-            <h1 className="relative inline-block transform -skew-x-12 hover:skew-x-0 transition-transform duration-300">
-              <span className="text-5xl font-extrabold tracking-tight bg-clip-text text-black">
-                Word Escalator
-              </span>
-            </h1>
+    <div>
+      <div className="max-w-md mx-auto p-4 space-y-4">
+        <div className="text-center">
+          <div className="mb-8">
+            <div className="flex items-center justify-center gap-2">
+              <h1 className="relative inline-block transform -skew-x-12 hover:skew-x-0 transition-transform duration-300">
+                <span className="text-5xl font-extrabold tracking-tight bg-clip-text text-black">
+                  Word Escalator
+                </span>
+              </h1>
+            </div>
           </div>
-        </div>
-        <div className="space-y-6">
-          <div className="flex justify-between items-center px-4 py-3 bg-gray-50 rounded-lg shadow-sm">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowInstructions(true)}
-                className="p-2 text-gray-500 hover:text-gray-700"
-              >
-                <Info size={20} />
-              </button>
-              <span
-                className={`text-sm uppercase tracking-wider font-bold 
+          <div className="space-y-6">
+            <div className="flex justify-between items-center px-4 py-3 bg-gray-50 rounded-lg shadow-sm">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowInstructions(true)}
+                  className="p-2 text-gray-500 hover:text-gray-700"
+                >
+                  <Info size={20} />
+                </button>
+                <span
+                  className={`text-sm uppercase tracking-wider font-bold 
                 ${
                   !isWarmupCompleted
                     ? "text-blue-600 bg-blue-100 p-1 rounded"
@@ -431,16 +432,16 @@ const WordEvolutionGame = () => {
                     ? "text-green-600 bg-green-100 p-1 rounded"
                     : "text-yellow-600 bg-yellow-100 p-1 rounded"
                 }`}
-              >
-                {!isWarmupCompleted
-                  ? "WARMUP"
-                  : isEndlessMode
-                  ? "ENDLESS MODE"
-                  : "DAILY PUZZLE"}
-              </span>
-            </div>
-            <div
-              className={`
+                >
+                  {!isWarmupCompleted
+                    ? "WARMUP"
+                    : isEndlessMode
+                    ? "ENDLESS MODE"
+                    : "DAILY PUZZLE"}
+                </span>
+              </div>
+              <div
+                className={`
               px-3 py-1 rounded-full text-sm font-medium
               ${
                 currentDifficulty === "easy"
@@ -452,45 +453,45 @@ const WordEvolutionGame = () => {
                   : "bg-gray-900 text-white"
               }
             `}
-            >
-              {currentDifficulty.toUpperCase()}
+              >
+                {currentDifficulty.toUpperCase()}
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-4 text-3xl font-bold">
+              <span>{currentPuzzle.start}</span>
+              <ArrowRight className="text-gray-400 w-6 h-6" />
+              <span>{currentPuzzle.end}</span>
             </div>
           </div>
-          <div className="flex items-center justify-center gap-4 text-3xl font-bold">
-            <span>{currentPuzzle.start}</span>
-            <ArrowRight className="text-gray-400 w-6 h-6" />
-            <span>{currentPuzzle.end}</span>
-          </div>
         </div>
-      </div>
 
-      <InstructionsModal
-        open={showInstructions}
-        onOpenChange={setShowInstructions}
-      />
+        <InstructionsModal
+          open={showInstructions}
+          onOpenChange={setShowInstructions}
+        />
 
-      <div className="bg-gray-100 p-4 rounded-lg">
-        <div className="flex flex-col gap-2">
-          {[currentPuzzle.start, ...previousWords].map((word, wordIndex) => (
-            <div
-              key={`${word}-${wordIndex}`}
-              className={`
+        <div className="bg-gray-100 p-4 rounded-lg">
+          <div className="flex flex-col gap-2">
+            {[currentPuzzle.start, ...previousWords].map((word, wordIndex) => (
+              <div
+                key={`${word}-${wordIndex}`}
+                className={`
                 flex justify-center gap-2
                 ${wordIndex > 0 && isShowingSolution ? "animate-slide-in" : ""}
               `}
-            >
-              {word.split("").map((letter, letterIndex) => {
-                const prevWord =
-                  wordIndex > 0
-                    ? previousWords[wordIndex - 1]
-                    : currentPuzzle.start;
-                const isChanged = prevWord[letterIndex] !== letter;
-                const isLastWord = wordIndex === previousWords.length;
+              >
+                {word.split("").map((letter, letterIndex) => {
+                  const prevWord =
+                    wordIndex > 0
+                      ? previousWords[wordIndex - 1]
+                      : currentPuzzle.start;
+                  const isChanged = prevWord[letterIndex] !== letter;
+                  const isLastWord = wordIndex === previousWords.length;
 
-                return (
-                  <div
-                    key={`${letter}-${letterIndex}-${wordIndex}`}
-                    className={`
+                  return (
+                    <div
+                      key={`${letter}-${letterIndex}-${wordIndex}`}
+                      className={`
                       w-12 h-12 
                       flex items-center justify-center 
                       text-xl font-bold rounded border-2
@@ -502,196 +503,252 @@ const WordEvolutionGame = () => {
                       }
                       ${isLastWord && isSuccess ? "animate-success-bounce" : ""}
                     `}
-                  >
-                    {letter}
-                  </div>
-                );
-              })}
-            </div>
-          ))}
-
-          {previousWords[previousWords.length - 1] !== currentPuzzle.end && (
-            <div
-              className={`flex justify-center gap-2 ${
-                isInvalid ? "animate-shake" : ""
-              }`}
-            >
-              {Array(currentPuzzle.start.length)
-                .fill("")
-                .map((_, letterIndex) => {
-                  const lastWord =
-                    previousWords.length > 0
-                      ? previousWords[previousWords.length - 1]
-                      : currentPuzzle.start;
-
-                  // Count total differences
-                  const currentDifferences = lastWord
-                    .split("")
-                    .reduce((count, letter, i) => {
-                      return (
-                        count +
-                        (currentWord[i] &&
-                        currentWord[i] !== " " &&
-                        currentWord[i] !== letter
-                          ? 1
-                          : 0)
-                      );
-                    }, 0);
-
-                  // Check if this letter is different
-                  const isDifferent =
-                    currentWord[letterIndex] &&
-                    currentWord[letterIndex] !== " " &&
-                    currentWord[letterIndex] !== lastWord[letterIndex];
-
-                  // Determine the highlighting style
-                  const highlightStyle =
-                    isDifferent && currentDifferences === 1
-                      ? "bg-yellow-100 border-yellow-500"
-                      : isDifferent && currentDifferences > 1
-                      ? "bg-red-100 border-red-500"
-                      : "border-gray-300";
-
-                  return (
-                    <input
-                      key={letterIndex}
-                      type="text"
-                      value={
-                        !currentWord[letterIndex] ||
-                        currentWord[letterIndex] === " "
-                          ? ""
-                          : currentWord[letterIndex]
-                      }
-                      onChange={(e) =>
-                        handleCharChange(letterIndex, e.target.value)
-                      }
-                      onKeyDown={(e) => {
-                        if (
-                          e.key === "Backspace" &&
-                          !e.target.value &&
-                          letterIndex > 0
-                        ) {
-                          const prevInput = document.querySelector(
-                            `input[data-index="${letterIndex - 1}"]`
-                          );
-                          prevInput?.focus();
-                        } else if (e.key === "Enter") {
-                          handleSubmit();
-                        }
-                      }}
-                      className={`w-12 h-12 text-center text-xl font-bold rounded border-2 
-                        ${highlightStyle}
-                        ${isInvalid ? "bg-red-50 border-red-500" : ""}`}
-                      maxLength={1}
-                      data-index={letterIndex}
-                      autoComplete="off"
-                    />
+                    >
+                      {letter}
+                    </div>
                   );
                 })}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="flex gap-2">
-        <button
-          onClick={handleSubmit}
-          className="flex-1 bg-blue-500 text-white p-2 rounded hover:bg-blue-600 font-medium"
-        >
-          Submit
-        </button>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={restartCurrentPuzzle}
-                className="p-2 bg-gray-200 rounded hover:bg-gray-300"
-              >
-                <RefreshCw size={20} />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Reset puzzle (-50 points)</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={handleShowHints}
-                className="p-2 bg-gray-200 rounded hover:bg-gray-300"
-              >
-                <HelpCircle size={20} />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Show hints (-10 points)</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={handleGiveUp}
-                className="p-2 bg-red-200 rounded hover:bg-red-300"
-              >
-                🏳️
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Give up</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-
-      {showHints && (
-        <div className="bg-gray-100 p-4 rounded-lg">
-          <div className="flex flex-wrap gap-2">
-            {getAvailableHints().map((word, index) => (
-              <span key={index} className="bg-white px-2 py-1 rounded text-sm">
-                {word}
-              </span>
+              </div>
             ))}
+
+            {previousWords[previousWords.length - 1] !== currentPuzzle.end && (
+              <div
+                className={`flex justify-center gap-2 ${
+                  isInvalid ? "animate-shake" : ""
+                }`}
+              >
+                {Array(currentPuzzle.start.length)
+                  .fill("")
+                  .map((_, letterIndex) => {
+                    const lastWord =
+                      previousWords.length > 0
+                        ? previousWords[previousWords.length - 1]
+                        : currentPuzzle.start;
+
+                    // Count total differences
+                    const currentDifferences = lastWord
+                      .split("")
+                      .reduce((count, letter, i) => {
+                        return (
+                          count +
+                          (currentWord[i] &&
+                          currentWord[i] !== " " &&
+                          currentWord[i] !== letter
+                            ? 1
+                            : 0)
+                        );
+                      }, 0);
+
+                    // Check if this letter is different
+                    const isDifferent =
+                      currentWord[letterIndex] &&
+                      currentWord[letterIndex] !== " " &&
+                      currentWord[letterIndex] !== lastWord[letterIndex];
+
+                    // Determine the highlighting style
+                    const highlightStyle =
+                      isDifferent && currentDifferences === 1
+                        ? "bg-yellow-100 border-yellow-500"
+                        : isDifferent && currentDifferences > 1
+                        ? "bg-red-100 border-red-500"
+                        : "border-gray-300";
+
+                    return (
+                      <input
+                        key={letterIndex}
+                        type="text"
+                        value={
+                          !currentWord[letterIndex] ||
+                          currentWord[letterIndex] === " "
+                            ? ""
+                            : currentWord[letterIndex]
+                        }
+                        onChange={(e) =>
+                          handleCharChange(letterIndex, e.target.value)
+                        }
+                        onKeyDown={(e) => {
+                          if (
+                            e.key === "Backspace" &&
+                            !e.target.value &&
+                            letterIndex > 0
+                          ) {
+                            const prevInput = document.querySelector(
+                              `input[data-index="${letterIndex - 1}"]`
+                            );
+                            prevInput?.focus();
+                          } else if (e.key === "Enter") {
+                            handleSubmit();
+                          }
+                        }}
+                        className={`w-12 h-12 text-center text-xl font-bold rounded border-2 
+                        ${highlightStyle}
+                        ${isInvalid ? "bg-red-50 border-red-500" : ""}`}
+                        maxLength={1}
+                        data-index={letterIndex}
+                        autoComplete="off"
+                      />
+                    );
+                  })}
+              </div>
+            )}
           </div>
         </div>
-      )}
 
-      {message && (
-        <Alert
-          variant={
-            message.includes("Invalid") || message.includes("Please")
-              ? "destructive"
-              : "default"
-          }
-          className="animate-in fade-in duration-200"
-        >
-          <AlertDescription>{message}</AlertDescription>
-        </Alert>
-      )}
+        <div className="flex gap-2">
+          <button
+            onClick={handleSubmit}
+            className="flex-1 bg-blue-500 text-white p-2 rounded hover:bg-blue-600 font-medium"
+          >
+            Submit
+          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={restartCurrentPuzzle}
+                  className="p-2 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  <RefreshCw size={20} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Reset puzzle (-50 points)</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleShowHints}
+                  className="p-2 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  <HelpCircle size={20} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Show hints (-10 points)</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleGiveUp}
+                  className="p-2 bg-red-200 rounded hover:bg-red-300"
+                >
+                  🏳️
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Give up</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
 
-      <div className="text-sm text-gray-500">
-        <p className="font-medium mb-1">Rules:</p>
-        <ol className="list-decimal pl-5 space-y-1">
-          <li>Change one letter at a time</li>
-          <li>Each word must be {currentPuzzle.start.length} letters</li>
-          <li>Reach the target word in the fewest moves</li>
-        </ol>
+        {showHints && (
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <div className="flex flex-wrap gap-2">
+              {getAvailableHints().map((word, index) => (
+                <span
+                  key={index}
+                  className="bg-white px-2 py-1 rounded text-sm"
+                >
+                  {word}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {message && (
+          <Alert
+            variant={
+              message.includes("Invalid") || message.includes("Please")
+                ? "destructive"
+                : "default"
+            }
+            className="animate-in fade-in duration-200"
+          >
+            <AlertDescription>{message}</AlertDescription>
+          </Alert>
+        )}
+
+        <div className="text-sm text-gray-500">
+          <p className="font-medium mb-1">Rules:</p>
+          <ol className="list-decimal pl-5 space-y-1">
+            <li>Change one letter at a time</li>
+            <li>Each word must be {currentPuzzle.start.length} letters</li>
+            <li>Reach the target word in the fewest moves</li>
+          </ol>
+        </div>
+
+        <CompletionModal
+          open={showCompletionModal}
+          currentPuzzle={currentPuzzle}
+          onOpenChange={setShowCompletionModal}
+          moves={moves}
+          difficulty={currentDifficulty}
+          puzzleHistory={puzzleHistory}
+          isGivenUp={isGivenUp}
+          onStartEndless={startEndlessMode}
+          hasCompletedDaily={hasCompletedDaily}
+        />
       </div>
+      <footer className="w-full mt-8 bg-gray-900 text-gray-300 py-12 border-t border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+            {/* Brand Section */}
+            <div className="space-y-4 md:col-span-2">
+              <h2 className="text-2xl font-bold text-white">Word Escalator</h2>
+              <p className="text-base text-gray-400 max-w-md">
+                Transform words one letter at a time in this challenging word
+                puzzle game. Test your vocabulary and problem-solving skills
+                with daily puzzles.
+              </p>
+              <p className="text-sm text-gray-500 pt-4">
+                © {new Date().getFullYear()} Word Escalator. All rights
+                reserved.
+              </p>
+            </div>
 
-      <CompletionModal
-        open={showCompletionModal}
-        currentPuzzle={currentPuzzle}
-        onOpenChange={setShowCompletionModal}
-        moves={moves}
-        difficulty={currentDifficulty}
-        puzzleHistory={puzzleHistory}
-        isGivenUp={isGivenUp}
-        onStartEndless={startEndlessMode}
-        hasCompletedDaily={hasCompletedDaily}
-      />
+            {/* Game Links Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white">Game</h3>
+              <ul className="space-y-3">
+                <li>
+                  <button
+                    onClick={() => setShowInstructions(true)}
+                    className="text-gray-400 hover:text-blue-400 transition-colors"
+                  >
+                    How to Play
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={startEndlessMode}
+                    className="text-gray-400 hover:text-blue-400 transition-colors"
+                  >
+                    Endless Mode
+                  </button>
+                </li>
+                <li>
+                  <a
+                    href="https://guesshex.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-blue-400 transition-colors"
+                  >
+                    Try GuessHex
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
