@@ -63,7 +63,7 @@ const CompletionModal = ({
       : `Word Escalator #${getDayNumber()}\n` +
         `${currentPuzzle.start} ⚡️ ${currentPuzzle.end}\n` +
         `${moves} moves • ${difficultyEmoji} ${difficulty.toUpperCase()} mode 🎮\n\n` +
-        `Can you match this?: wordescalator.com`;
+        `Can you match this?: https://wordescalator.com`;
 
     navigator.clipboard
       .writeText(shareText)

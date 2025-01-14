@@ -102,11 +102,18 @@ const WordEvolutionGame = () => {
   const [puzzleHistory, setPuzzleHistory] = useState([]);
   const [isGivenUp, setIsGivenUp] = useState(false);
 
-  const pointsSound = new Audio("/sounds/320655__rhodesmas__level-up-01.wav");
-  pointsSound.volume = 0.2;
+  let pointsSound;
+
+  // Only create Audio instance in browser environment
+  if (typeof window !== "undefined" && typeof Audio !== "undefined") {
+    pointsSound = new Audio("/sounds/320655__rhodesmas__level-up-01.wav");
+    pointsSound.volume = 0.2;
+  }
 
   useEffect(() => {
-    pointsSound.load();
+    if (typeof Audio !== "undefined") {
+      pointsSound.load();
+    }
   }, []);
 
   useEffect(() => {
@@ -194,8 +201,12 @@ const WordEvolutionGame = () => {
 
     // Check for win condition
     if (currentWord === currentPuzzle.end) {
-      pointsSound.currentTime = 0;
-      pointsSound.play().catch((err) => console.log("Audio play failed:", err));
+      if (typeof Audio !== "undefined") {
+        pointsSound.currentTime = 0;
+        pointsSound
+          .play()
+          .catch((err) => console.log("Audio play failed:", err));
+      }
 
       setPuzzleHistory([
         ...puzzleHistory,
@@ -411,7 +422,16 @@ const WordEvolutionGame = () => {
               >
                 <Info size={20} />
               </button>
-              <span className="text-sm text-gray-500 uppercase tracking-wider">
+              <span
+                className={`text-sm uppercase tracking-wider font-bold 
+                ${
+                  !isWarmupCompleted
+                    ? "text-blue-600 bg-blue-100 p-1 rounded"
+                    : isEndlessMode
+                    ? "text-green-600 bg-green-100 p-1 rounded"
+                    : "text-yellow-600 bg-yellow-100 p-1 rounded"
+                }`}
+              >
                 {!isWarmupCompleted
                   ? "WARMUP"
                   : isEndlessMode
