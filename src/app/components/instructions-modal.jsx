@@ -126,10 +126,14 @@ const InstructionsModal = ({ open, onOpenChange }) => {
           <div className="space-y-2">
             <p className="font-medium">Scoring:</p>
             <ul className="list-disc pl-5 space-y-1">
-              <li>Complete puzzles in fewer moves for more points</li>
-              <li>Using hints costs 10 points</li>
-              <li>Resetting a puzzle costs 50 points</li>
-              <li>Each completed puzzle unlocks a more challenging level</li>
+              <li>
+                Complete a warmup puzzle and then attempt the daily puzzle!
+              </li>
+              <li>Share your score with friends!</li>
+              <li>
+                After the daily puzzle is over, you can keep going in endless
+                mode!
+              </li>
             </ul>
           </div>
 
@@ -138,7 +142,10 @@ const InstructionsModal = ({ open, onOpenChange }) => {
             <ul className="list-disc pl-5 space-y-1">
               <li>Look for common word patterns</li>
               <li>Sometimes going "backwards" can help reach the goal</li>
-              <li>Use hints if you're stuck, but they cost points!</li>
+              <li>
+                Use hints if you're stuck, but they don't always have the best
+                words!
+              </li>
             </ul>
           </div>
         </div>
