@@ -84,11 +84,8 @@ const WordEvolutionGame = () => {
   };
 
   // Get initial warmup puzzle
-  const warmupPuzzle = getWarmupPuzzle();
-  const [currentPuzzle, setCurrentPuzzle] = useState(warmupPuzzle);
-  const [currentDifficulty, setCurrentDifficulty] = useState(
-    warmupPuzzle.difficulty
-  );
+  const [currentPuzzle, setCurrentPuzzle] = useState();
+  const [currentDifficulty, setCurrentDifficulty] = useState();
   const [currentWord, setCurrentWord] = useState("");
   const [previousWords, setPreviousWords] = useState([]);
   const [message, setMessage] = useState("");
@@ -117,6 +114,14 @@ const WordEvolutionGame = () => {
   }, []);
 
   useEffect(() => {
+    const warmup = getWarmupPuzzle();
+    setCurrentPuzzle(warmup);
+    setCurrentDifficulty(warmup.difficulty);
+    setCurrentWord(" ".repeat(warmup.start.length));
+  }, []);
+
+  useEffect(() => {
+    if (!currentPuzzle) return;
     setCurrentWord(" ".repeat(currentPuzzle.start.length));
     setPreviousWords([]);
     setMessage("");
@@ -240,7 +245,10 @@ const WordEvolutionGame = () => {
         }, 500);
       } else if (isEndlessMode) {
         // Endless mode - just transition to next puzzle
+        setIsSuccess(true);
         setTimeout(() => {
+          setIsSuccess(false);
+
           const nextPuzzle = getEndlessPuzzle();
           setCurrentPuzzle(nextPuzzle);
           setCurrentDifficulty(nextPuzzle.difficulty);
@@ -400,6 +408,14 @@ const WordEvolutionGame = () => {
     setCurrentPuzzle(newPuzzle);
     setCurrentDifficulty(newPuzzle.difficulty);
   };
+
+  if (!currentPuzzle) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse">Loading puzzle...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
