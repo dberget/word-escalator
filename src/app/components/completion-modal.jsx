@@ -62,7 +62,7 @@ const CompletionModal = ({
         `Challenge your friends: wordescalator.com`
       : `Word Escalator #${getDayNumber()}\n` +
         `${currentPuzzle.start} ⚡️ ${currentPuzzle.end}\n` +
-        `${moves} moves • ${difficultyEmoji} ${difficulty.toUpperCase()} mode 🎮\n\n` +
+        `${moves} moves • ${difficultyEmoji} ${difficulty.toUpperCase()}\n\n` +
         `Can you match this?: https://wordescalator.com`;
 
     navigator.clipboard
@@ -88,52 +88,76 @@ const CompletionModal = ({
           <Confetti {...windowSize} recycle={false} numberOfPieces={200} />
         )}
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center">
-            🎉 Daily Puzzle Complete! 🎉
+          <DialogTitle className="text-2xl text-center font-bold">
+            {isGivenUp ? "Better luck next time!" : "🎉 Puzzle Complete! 🎉"}
           </DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col items-center gap-4 py-4">
-          <div
-            className={`
-            px-3 py-1 rounded-full text-sm font-medium
-            ${
-              difficulty === "easy"
-                ? "bg-green-100 text-green-800"
-                : difficulty === "hard"
-                ? "bg-red-100 text-red-800"
-                : difficulty === "extreme"
-                ? "bg-purple-100 text-purple-800"
-                : "bg-gray-900 text-white"
-            }
-          `}
-          >
-            {difficulty.toUpperCase()}
+
+        <div className="flex flex-col items-center gap-6 py-4">
+          {/* Game Info Section */}
+          <div className="w-full text-center space-y-2">
+            <div className="text-sm text-gray-500">
+              Word Escalator #{getDayNumber()}
+            </div>
+            <div className="flex items-center justify-center gap-3 text-xl font-semibold">
+              <span>{currentPuzzle.start}</span>
+              <span className="text-blue-500">⚡️</span>
+              <span>{currentPuzzle.end}</span>
+            </div>
           </div>
 
-          <div className="text-center space-y-1">
-            <div className="text-3xl font-bold">{moves}</div>
-            <div className="text-sm text-gray-500">MOVES</div>
+          {/* Stats Section */}
+          <div className="w-full grid grid-cols-2 gap-4 border-y border-gray-200 py-4">
+            <div className="text-center space-y-1">
+              <div className="text-3xl font-bold">{moves}</div>
+              <div className="text-sm text-gray-500">MOVES</div>
+            </div>
+            <div className="text-center space-y-1">
+              <div
+                className={`
+                inline-block px-3 py-1 rounded-full text-sm font-medium
+                ${
+                  difficulty === "easy"
+                    ? "bg-green-100 text-green-800"
+                    : difficulty === "hard"
+                    ? "bg-red-100 text-red-800"
+                    : difficulty === "extreme"
+                    ? "bg-purple-100 text-purple-800"
+                    : "bg-gray-900 text-white"
+                }
+              `}
+              >
+                {difficulty.toUpperCase()}
+              </div>
+              <div className="text-sm text-gray-500">DIFFICULTY</div>
+            </div>
           </div>
 
-          <div className="text-sm text-gray-500 text-center">
-            Word Escalator #{getDayNumber()}
-          </div>
-
-          <div className="flex flex-col gap-2 w-full">
+          {/* Buttons Section */}
+          <div className="flex flex-col gap-4 w-full">
             <button
               onClick={handleCopy}
-              className="flex items-center justify-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition-colors"
+              className="flex items-center justify-center gap-2.5 bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-700 transition-all duration-200 shadow-sm hover:shadow-md"
             >
-              <Copy size={20} />
-              {copied ? "Copied!" : "Share Results"}
+              {copied ? (
+                <>
+                  <span className="text-lg">✓</span>
+                  <span>Results Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-5 h-5" />
+                  <span>Share Results</span>
+                </>
+              )}
             </button>
 
             <button
               onClick={onStartEndless}
-              className="flex items-center justify-center gap-2 bg-purple-500 text-white px-4 py-2 rounded-full hover:bg-purple-600 transition-colors"
+              className="flex items-center justify-center gap-2.5 bg-violet-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-violet-700 transition-all duration-200 shadow-sm hover:shadow-md"
             >
-              <span>🎮</span>
-              Continue in Endless Mode
+              <span className="text-xl">∞</span>
+              <span>Continue in Endless Mode</span>
             </button>
           </div>
         </div>
