@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import InstructionsModal from "./instructions-modal";
 import CompletionModal from "./completion-modal";
+import { notifyPuzzleCompletion } from "@/utils/discord";
 
 const WordEvolutionGame = () => {
   const validWords = getValidWords();
@@ -166,6 +167,7 @@ const WordEvolutionGame = () => {
   };
 
   const handleSubmit = async () => {
+    console.log("handleSubmit");
     const expectedLength = currentPuzzle.start.length;
 
     if (!currentWord?.trim() || currentWord.length !== expectedLength) {
@@ -206,6 +208,19 @@ const WordEvolutionGame = () => {
 
     // Check for win condition
     if (currentWord === currentPuzzle.end) {
+      await notifyPuzzleCompletion({
+        moves: newMoves,
+        difficulty: currentDifficulty,
+        startWord: currentPuzzle.start,
+        endWord: currentPuzzle.end,
+        isGivenUp: false,
+        gameMode: !isWarmupCompleted
+          ? "WARMUP"
+          : isEndlessMode
+          ? "ENDLESS"
+          : "DAILY",
+      });
+
       if (typeof Audio !== "undefined") {
         pointsSound.currentTime = 0;
         pointsSound
@@ -306,7 +321,7 @@ const WordEvolutionGame = () => {
     setShowHints(!showHints);
   };
 
-  const handleGiveUp = () => {
+  const handleGiveUp = async () => {
     setIsGivenUp(true);
     const solution = findWordPath(
       currentPuzzle.start,
@@ -340,6 +355,19 @@ const WordEvolutionGame = () => {
 
     setCurrentWord(" ".repeat(currentPuzzle.start.length));
     setMoves(path.length);
+
+    await notifyPuzzleCompletion({
+      moves: path.length,
+      difficulty: currentDifficulty,
+      startWord: currentPuzzle.start,
+      endWord: currentPuzzle.end,
+      isGivenUp: true,
+      gameMode: !isWarmupCompleted
+        ? "WARMUP"
+        : isEndlessMode
+        ? "ENDLESS"
+        : "DAILY",
+    });
   };
 
   // Add function to get random endless puzzle
