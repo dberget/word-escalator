@@ -55,11 +55,10 @@ const WordEvolutionGame = () => {
     // Determine difficulty with weighted distribution:
     // hard: 60%, extreme: 25%, impossible: 15%
     const difficultyRandom = (index % 100) / 100;
-    console.log(difficultyRandom);
     let difficulty;
-    if (difficultyRandom < 0.6) {
+    if (difficultyRandom < 0.5) {
       difficulty = "hard";
-    } else if (difficultyRandom < 0.85) {
+    } else if (difficultyRandom < 0.75) {
       difficulty = "extreme";
     } else {
       difficulty = "impossible";
@@ -77,7 +76,10 @@ const WordEvolutionGame = () => {
 
   // Get a simple warmup puzzle
   const getWarmupPuzzle = () => {
-    const warmupPuzzle = getRandomPuzzle(4, "easy");
+    // Randomly choose word length (4 or 5)
+    const wordLength = Math.random() < 0.5 ? 4 : 5;
+
+    const warmupPuzzle = getRandomPuzzle(wordLength, "easy");
     return {
       ...warmupPuzzle,
       difficulty: "easy",
@@ -99,6 +101,9 @@ const WordEvolutionGame = () => {
   const [isShowingSolution, setIsShowingSolution] = useState(false);
   const [puzzleHistory, setPuzzleHistory] = useState([]);
   const [isGivenUp, setIsGivenUp] = useState(false);
+
+  // Add state for the endless mode tooltip
+  const [showEndlessModeTooltip, setShowEndlessModeTooltip] = useState(false);
 
   let pointsSound;
 
@@ -394,7 +399,7 @@ const WordEvolutionGame = () => {
     };
   };
 
-  // Modify startEndlessMode to use random puzzle
+  // Modify startEndlessMode to show the tooltip
   const startEndlessMode = () => {
     setIsWarmupCompleted(true);
     setIsEndlessMode(true);
@@ -402,6 +407,10 @@ const WordEvolutionGame = () => {
     const newPuzzle = getEndlessPuzzle();
     setCurrentPuzzle(newPuzzle);
     setCurrentDifficulty(newPuzzle.difficulty);
+    // Show the tooltip
+    setShowEndlessModeTooltip(true);
+    // Hide it after 5 seconds
+    setTimeout(() => setShowEndlessModeTooltip(false), 5000);
   };
 
   const handleDifficultyClick = () => {
@@ -431,7 +440,7 @@ const WordEvolutionGame = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="flex-grow max-w-md mx-auto p-4 space-y-4">
+      <div className="flex-grow w-1/3 max-w-md mx-auto p-4 space-y-4">
         <div className="text-center">
           <div className="mb-8">
             <div className="flex items-center justify-center gap-2">
@@ -487,6 +496,14 @@ const WordEvolutionGame = () => {
                 {currentDifficulty.toUpperCase()}
               </div>
             </div>
+            {showEndlessModeTooltip && (
+              <Alert className="animate-in fade-in duration-200 bg-blue-50 border-blue-200">
+                <AlertDescription>
+                  Tip: Click the difficulty badge to adjust game difficulty
+                </AlertDescription>
+              </Alert>
+            )}
+
             <div className="flex items-center justify-center gap-4 text-3xl font-bold">
               <span>{currentPuzzle.start}</span>
               <ArrowRight className="text-gray-400 w-6 h-6" />
