@@ -18,6 +18,7 @@ import {
 import InstructionsModal from "./instructions-modal";
 import CompletionModal from "./completion-modal";
 import { notifyPuzzleCompletion } from "@/utils/discord";
+import FeedbackModal from "./feedback-modal";
 
 const WordEvolutionGame = () => {
   const validWords = getValidWords();
@@ -104,6 +105,9 @@ const WordEvolutionGame = () => {
 
   // Add state for the endless mode tooltip
   const [showEndlessModeTooltip, setShowEndlessModeTooltip] = useState(false);
+
+  // Add new state for feedback modal
+  const [showFeedback, setShowFeedback] = useState(false);
 
   let pointsSound;
 
@@ -803,9 +807,26 @@ const WordEvolutionGame = () => {
                 </li>
               </ul>
             </div>
+
+            {/* Add new Feedback section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white">Contact</h3>
+              <ul className="space-y-3">
+                <li>
+                  <button
+                    onClick={() => setShowFeedback(true)}
+                    className="text-gray-400 hover:text-blue-400 transition-colors"
+                  >
+                    Send Feedback
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </footer>
+
+      <FeedbackModal open={showFeedback} onOpenChange={setShowFeedback} />
     </div>
   );
 };
