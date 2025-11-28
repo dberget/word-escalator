@@ -489,7 +489,7 @@ const WordEvolutionGame = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowInstructions(true)}
-                className="p-2.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800 transition-all duration-200"
+                className="p-2.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800 hover:scale-105 active:scale-95 transition-all duration-100"
                 aria-label="How to play"
               >
                 <Info size={18} />
@@ -507,7 +507,7 @@ const WordEvolutionGame = () => {
               disabled={!isEndlessMode}
               className={`
                 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
-                border transition-all duration-200
+                border transition-all duration-100
                 ${diffConfig.bg} ${diffConfig.text} ${diffConfig.border}
                 ${isEndlessMode ? "cursor-pointer hover:scale-105 active:scale-95" : "cursor-default"}
               `}
@@ -517,7 +517,7 @@ const WordEvolutionGame = () => {
           </div>
 
           {showEndlessModeTooltip && (
-            <div className="mt-4 p-3 rounded-xl bg-violet-50 border border-violet-200 text-violet-700 text-sm animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="mt-4 p-3 rounded-xl bg-violet-50 border border-violet-200 text-violet-700 text-sm animate-in fade-in slide-in-from-top-2 duration-150">
               <span className="font-medium">Tip:</span> Click the difficulty badge to cycle through difficulty levels
             </div>
           )}
@@ -571,12 +571,13 @@ const WordEvolutionGame = () => {
                         w-12 h-12 sm:w-14 sm:h-14
                         flex items-center justify-center
                         text-lg sm:text-xl font-bold rounded-xl border-2
-                        transition-all duration-300
+                        transition-all duration-150
                         ${isChanged
                           ? "bg-amber-100 border-amber-400 letter-tile-changed text-amber-800"
                           : "bg-white border-slate-200 letter-tile text-slate-700"
                         }
                         ${isLastWord && isSuccess ? "animate-success-bounce" : ""}
+                        hover:scale-[1.02]
                       `}
                     >
                       {letter}
@@ -660,7 +661,7 @@ const WordEvolutionGame = () => {
                           text-center text-lg sm:text-xl font-bold
                           rounded-xl border-2
                           outline-none focus:ring-4
-                          transition-all duration-200
+                          transition-all duration-100
                           ${inputStyle}
                         `}
                         maxLength={1}
@@ -697,7 +698,7 @@ const WordEvolutionGame = () => {
               <TooltipTrigger asChild>
                 <button
                   onClick={restartCurrentPuzzle}
-                  className="p-3.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800 transition-all duration-200"
+                  className="p-3.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800 hover:scale-105 active:scale-95 transition-all duration-100"
                 >
                   <RefreshCw size={20} />
                 </button>
@@ -713,7 +714,7 @@ const WordEvolutionGame = () => {
               <TooltipTrigger asChild>
                 <button
                   onClick={handleShowHints}
-                  className={`p-3.5 rounded-xl transition-all duration-200 ${
+                  className={`p-3.5 rounded-xl transition-all duration-100 hover:scale-105 active:scale-95 ${
                     showHints
                       ? "bg-amber-100 text-amber-700"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800"
@@ -733,7 +734,7 @@ const WordEvolutionGame = () => {
               <TooltipTrigger asChild>
                 <button
                   onClick={handleGiveUp}
-                  className="p-3.5 rounded-xl bg-rose-100 text-rose-600 hover:bg-rose-200 hover:text-rose-700 transition-all duration-200"
+                  className="p-3.5 rounded-xl bg-rose-100 text-rose-600 hover:bg-rose-200 hover:text-rose-700 hover:scale-105 active:scale-95 transition-all duration-100"
                 >
                   <span className="text-lg">🏳️</span>
                 </button>
@@ -747,13 +748,14 @@ const WordEvolutionGame = () => {
 
         {/* Hints Panel */}
         {showHints && (
-          <div className="game-card rounded-2xl p-4 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="game-card rounded-2xl p-4 animate-in fade-in slide-in-from-top-2 duration-150">
             <p className="text-xs text-slate-500 uppercase tracking-wider font-medium mb-3">Available words</p>
             <div className="flex flex-wrap gap-2">
               {getAvailableHints().map((word, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-700 hover:border-amber-300 hover:bg-amber-50 transition-colors cursor-default"
+                  className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-700 hover:border-amber-300 hover:bg-amber-50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-100 cursor-default"
+                  style={{ animationDelay: `${index * 30}ms` }}
                 >
                   {word}
                 </span>
@@ -770,7 +772,7 @@ const WordEvolutionGame = () => {
                 ? "destructive"
                 : "default"
             }
-            className="animate-in fade-in slide-in-from-top-2 duration-200 rounded-xl"
+            className="animate-in fade-in slide-in-from-top-2 duration-150 rounded-xl"
           >
             <AlertDescription>{message}</AlertDescription>
           </Alert>

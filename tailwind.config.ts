@@ -45,12 +45,12 @@ export default {
         },
       },
       animation: {
-        "slide-up-out": "slide-up-out 0.5s ease-in-out forwards",
-        "slide-up-in": "slide-up-in 0.5s ease-in-out forwards",
-        "float-up": "float-up 1s ease-out forwards",
-        shake: "shake 0.3s ease-in-out",
-        "success-bounce": "success-bounce 0.5s ease-in-out",
-        "slide-in": "slide-in 0.3s ease-out forwards",
+        "slide-up-out": "slide-up-out 0.2s ease-in forwards",
+        "slide-up-in": "slide-up-in 0.2s ease-out forwards",
+        "float-up": "float-up 0.6s ease-out forwards",
+        shake: "shake 0.2s ease-out",
+        "success-bounce": "success-bounce 0.3s ease-out",
+        "slide-in": "slide-in 0.15s ease-out forwards",
       },
       colors: {
         background: "hsl(var(--background))",

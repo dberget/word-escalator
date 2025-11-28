@@ -68,9 +68,9 @@ export default function FeedbackModal({ open, onOpenChange }) {
                 className={`
                   w-full flex items-center justify-center gap-2.5
                   px-6 py-3.5 rounded-xl font-semibold text-base
-                  transition-all duration-200
+                  transition-all duration-100 hover:scale-[1.02] active:scale-[0.98]
                   ${isSubmitting || !feedback.trim()
-                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed hover:scale-100'
                     : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 shadow-lg shadow-amber-200 hover:shadow-amber-300'
                   }
                 `}

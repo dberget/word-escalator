@@ -40,7 +40,7 @@ const CompletionModal = ({
   useEffect(() => {
     if (open) {
       setShowConfetti(true);
-      const timer = setTimeout(() => setShowConfetti(false), 5000);
+      const timer = setTimeout(() => setShowConfetti(false), 3000);
       return () => clearTimeout(timer);
     }
   }, [open]);
@@ -175,7 +175,7 @@ const CompletionModal = ({
               className={`
                 w-full flex items-center justify-center gap-2.5
                 px-6 py-3.5 rounded-xl font-semibold text-base
-                transition-all duration-200
+                transition-all duration-100 hover:scale-[1.02] active:scale-[0.98]
                 ${copied
                   ? 'bg-emerald-500 text-white'
                   : 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-200 hover:shadow-emerald-300'
@@ -197,7 +197,7 @@ const CompletionModal = ({
 
             <button
               onClick={onStartEndless}
-              className="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-6 py-3.5 rounded-xl font-semibold text-base hover:from-violet-600 hover:to-purple-700 transition-all duration-200 shadow-lg shadow-violet-200 hover:shadow-violet-300"
+              className="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-6 py-3.5 rounded-xl font-semibold text-base hover:from-violet-600 hover:to-purple-700 transition-all duration-100 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-violet-200 hover:shadow-violet-300"
             >
               <Zap className="w-5 h-5" />
               <span>Continue in Endless Mode</span>
