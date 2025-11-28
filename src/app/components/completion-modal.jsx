@@ -4,7 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Copy } from "lucide-react";
+import { Copy, Share2, Zap, Trophy, Target } from "lucide-react";
 import Confetti from "react-confetti";
 import { useState, useEffect } from "react";
 
@@ -49,21 +49,21 @@ const CompletionModal = ({
     const difficultyEmoji =
       {
         easy: "🟢",
-        hard: "🔴",
-        extreme: "💀",
-        impossible: "👿",
+        hard: "🟠",
+        extreme: "🔴",
+        impossible: "💀",
       }[difficulty] || "🟢";
 
     const shareText = isGivenUp
       ? `Word Escalator #${getDayNumber()}\n` +
-        `${currentPuzzle.start} ⚡️ ${currentPuzzle.end}\n` +
-        `${difficultyEmoji} ${difficulty.toUpperCase()} mode\n` +
+        `${currentPuzzle.start} → ${currentPuzzle.end}\n` +
+        `${difficultyEmoji} ${difficulty.toUpperCase()}\n` +
         `🏳️ Gave up\n\n` +
-        `Challenge your friends: wordescalator.com`
+        `Can you solve it? wordescalator.com`
       : `Word Escalator #${getDayNumber()}\n` +
-        `${currentPuzzle.start} ⚡️ ${currentPuzzle.end}\n` +
+        `${currentPuzzle.start} → ${currentPuzzle.end}\n` +
         `${moves} moves • ${difficultyEmoji} ${difficulty.toUpperCase()}\n\n` +
-        `Can you match this?: https://wordescalator.com`;
+        `Can you beat this? wordescalator.com`;
 
     navigator.clipboard
       .writeText(shareText)
@@ -75,78 +75,121 @@ const CompletionModal = ({
   };
 
   const getDayNumber = () => {
-    const launchDate = new Date("2024-03-20"); // Replace with your launch date
+    const launchDate = new Date("2024-03-20");
     const today = new Date();
     const diffTime = Math.abs(today - launchDate);
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
+  const getDifficultyConfig = (diff) => {
+    const configs = {
+      easy: {
+        bg: "bg-emerald-50",
+        text: "text-emerald-700",
+        border: "border-emerald-200",
+      },
+      hard: {
+        bg: "bg-orange-50",
+        text: "text-orange-700",
+        border: "border-orange-200",
+      },
+      extreme: {
+        bg: "bg-rose-50",
+        text: "text-rose-700",
+        border: "border-rose-200",
+      },
+      impossible: {
+        bg: "bg-slate-800",
+        text: "text-white",
+        border: "border-slate-600",
+      },
+    };
+    return configs[diff] || configs.easy;
+  };
+
+  const diffConfig = getDifficultyConfig(difficulty);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        {showConfetti && (
-          <Confetti {...windowSize} recycle={false} numberOfPieces={200} />
+      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-0 shadow-2xl">
+        {showConfetti && !isGivenUp && (
+          <Confetti
+            {...windowSize}
+            recycle={false}
+            numberOfPieces={200}
+            colors={["#f59e0b", "#fbbf24", "#fcd34d", "#10b981", "#6366f1"]}
+          />
         )}
-        <DialogHeader>
-          <DialogTitle className="text-2xl text-center font-bold">
-            {isGivenUp ? "Better luck next time!" : "🎉 Puzzle Complete! 🎉"}
-          </DialogTitle>
-        </DialogHeader>
 
-        <div className="flex flex-col items-center gap-6 py-4">
-          {/* Game Info Section */}
-          <div className="w-full text-center space-y-2">
-            <div className="text-sm text-gray-500">
-              Word Escalator #{getDayNumber()}
-            </div>
-            <div className="flex items-center justify-center gap-3 text-xl font-semibold">
-              <span>{currentPuzzle.start}</span>
-              <span className="text-blue-500">⚡️</span>
-              <span>{currentPuzzle.end}</span>
-            </div>
-          </div>
-
-          {/* Stats Section */}
-          <div className="w-full grid grid-cols-2 gap-4 border-y border-gray-200 py-4">
-            <div className="text-center space-y-1">
-              <div className="text-3xl font-bold">{moves}</div>
-              <div className="text-sm text-gray-500">MOVES</div>
-            </div>
-            <div className="text-center space-y-1">
-              <div
-                className={`
-                inline-block px-3 py-1 rounded-full text-sm font-medium
-                ${
-                  difficulty === "easy"
-                    ? "bg-green-100 text-green-800"
-                    : difficulty === "hard"
-                    ? "bg-red-100 text-red-800"
-                    : difficulty === "extreme"
-                    ? "bg-purple-100 text-purple-800"
-                    : "bg-gray-900 text-white"
-                }
-              `}
-              >
-                {difficulty.toUpperCase()}
+        {/* Header with gradient */}
+        <div className={`px-6 pt-8 pb-6 text-center ${isGivenUp ? 'bg-slate-50' : 'bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100'}`}>
+          <div className="mb-4">
+            {isGivenUp ? (
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-slate-200 flex items-center justify-center">
+                <Target className="w-8 h-8 text-slate-500" />
               </div>
-              <div className="text-sm text-gray-500">DIFFICULTY</div>
+            ) : (
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-200">
+                <Trophy className="w-8 h-8 text-white" />
+              </div>
+            )}
+          </div>
+          <DialogTitle className="text-2xl font-display font-semibold text-slate-900 mb-1">
+            {isGivenUp ? "Nice Try!" : "Puzzle Complete!"}
+          </DialogTitle>
+          <p className="text-slate-500 text-sm">
+            {isGivenUp ? "Better luck next time" : "Great job solving today's puzzle"}
+          </p>
+        </div>
+
+        <div className="px-6 pb-6 space-y-5">
+          {/* Puzzle Info */}
+          <div className="flex items-center justify-center gap-3 py-3 bg-slate-50 rounded-xl">
+            <span className="text-xs text-slate-400 uppercase tracking-wider font-medium">Day #{getDayNumber()}</span>
+            <span className="text-slate-300">•</span>
+            <span className="font-display text-lg font-semibold text-slate-700">{currentPuzzle.start}</span>
+            <span className="text-amber-500">→</span>
+            <span className="font-display text-lg font-semibold text-amber-600">{currentPuzzle.end}</span>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-slate-50 rounded-xl p-4 text-center">
+              <p className="text-3xl font-display font-bold text-slate-900">{moves}</p>
+              <p className="text-xs text-slate-500 uppercase tracking-wider font-medium mt-1">Moves</p>
+            </div>
+            <div className="bg-slate-50 rounded-xl p-4 text-center">
+              <span
+                className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${diffConfig.bg} ${diffConfig.text} ${diffConfig.border}`}
+              >
+                {difficulty}
+              </span>
+              <p className="text-xs text-slate-500 uppercase tracking-wider font-medium mt-2">Difficulty</p>
             </div>
           </div>
 
-          {/* Buttons Section */}
-          <div className="flex flex-col gap-4 w-full">
+          {/* Action Buttons */}
+          <div className="space-y-3 pt-2">
             <button
               onClick={handleCopy}
-              className="flex items-center justify-center gap-2.5 bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-700 transition-all duration-200 shadow-sm hover:shadow-md"
+              className={`
+                w-full flex items-center justify-center gap-2.5
+                px-6 py-3.5 rounded-xl font-semibold text-base
+                transition-all duration-200
+                ${copied
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-200 hover:shadow-emerald-300'
+                }
+              `}
             >
               {copied ? (
                 <>
-                  <span className="text-lg">✓</span>
-                  <span>Results Copied</span>
+                  <span>✓</span>
+                  <span>Copied to Clipboard!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-5 h-5" />
+                  <Share2 className="w-5 h-5" />
                   <span>Share Results</span>
                 </>
               )}
@@ -154,9 +197,9 @@ const CompletionModal = ({
 
             <button
               onClick={onStartEndless}
-              className="flex items-center justify-center gap-2.5 bg-violet-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-violet-700 transition-all duration-200 shadow-sm hover:shadow-md"
+              className="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-6 py-3.5 rounded-xl font-semibold text-base hover:from-violet-600 hover:to-purple-700 transition-all duration-200 shadow-lg shadow-violet-200 hover:shadow-violet-300"
             >
-              <span className="text-xl">∞</span>
+              <Zap className="w-5 h-5" />
               <span>Continue in Endless Mode</span>
             </button>
           </div>
