@@ -21,6 +21,7 @@ import { notifyPuzzleCompletion } from "@/utils/discord";
 import FeedbackModal from "./feedback-modal";
 import { getOrCreateUserId } from "@/utils/userUtils";
 import { rewardsApi } from "@/utils/rewardsApi";
+import Link from "next/link";
 
 const WordEvolutionGame = () => {
   const validWords = getValidWords();
@@ -92,6 +93,7 @@ const WordEvolutionGame = () => {
   const [showEndlessModeTooltip, setShowEndlessModeTooltip] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [par, setPar] = useState(null);
 
   let pointsSound;
 
@@ -122,6 +124,12 @@ const WordEvolutionGame = () => {
     setPreviousWords([]);
     setMessage("");
     setMoves(0);
+    setIsGivenUp(false);
+    setIsShowingSolution(false);
+
+    // Calculate par (optimal solution length)
+    const optimalPath = findWordPath(currentPuzzle.start, currentPuzzle.end, validWords);
+    setPar(optimalPath.length > 0 ? optimalPath.length - 1 : null); // -1 because path includes start word
 
     setTimeout(() => {
       const firstInput = document.querySelector('input[data-index="0"]');
@@ -542,6 +550,26 @@ const WordEvolutionGame = () => {
               </p>
             </div>
           </div>
+          {/* Moves & Par indicator */}
+          {par !== null && (
+            <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-400 uppercase tracking-wider font-medium">Moves</span>
+                <span className={`font-display text-lg font-bold ${
+                  moves === 0 ? 'text-slate-400' :
+                  moves <= par ? 'text-emerald-600' :
+                  moves <= par + 2 ? 'text-amber-600' : 'text-rose-500'
+                }`}>
+                  {moves}
+                </span>
+              </div>
+              <span className="text-slate-300">/</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-400 uppercase tracking-wider font-medium">Optimal</span>
+                <span className="font-display text-lg font-bold text-slate-600">{par}</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Game Board */}
@@ -807,6 +835,7 @@ const WordEvolutionGame = () => {
           currentPuzzle={currentPuzzle}
           onOpenChange={setShowCompletionModal}
           moves={moves}
+          par={par}
           difficulty={currentDifficulty}
           puzzleHistory={puzzleHistory}
           isGivenUp={isGivenUp}
@@ -832,12 +861,12 @@ const WordEvolutionGame = () => {
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Play</h3>
               <ul className="space-y-3">
                 <li>
-                  <button
-                    onClick={() => setShowInstructions(true)}
+                  <Link
+                    href="/how-to-play"
                     className="text-slate-400 hover:text-amber-400 transition-colors text-sm"
                   >
                     How to Play
-                  </button>
+                  </Link>
                 </li>
                 <li>
                   <button

@@ -12,6 +12,7 @@ const CompletionModal = ({
   open,
   onOpenChange,
   moves,
+  par,
   difficulty,
   isGivenUp,
   onStartEndless,
@@ -54,15 +55,26 @@ const CompletionModal = ({
         impossible: "💀",
       }[difficulty] || "🟢";
 
+    const getScoreEmoji = () => {
+      if (!par) return "";
+      const diff = moves - par;
+      if (diff <= 0) return "🏆 ";
+      if (diff === 1) return "⭐ ";
+      if (diff === 2) return "👍 ";
+      return "";
+    };
+
+    const parText = par ? ` (Optimal ${par})` : "";
+
     const shareText = isGivenUp
       ? `Word Escalator #${getDayNumber()}\n` +
         `${currentPuzzle.start} → ${currentPuzzle.end}\n` +
-        `${difficultyEmoji} ${difficulty.toUpperCase()}\n` +
+        `${difficultyEmoji} ${difficulty.toUpperCase()}${parText}\n` +
         `🏳️ Gave up\n\n` +
         `Can you solve it? wordescalator.com`
       : `Word Escalator #${getDayNumber()}\n` +
         `${currentPuzzle.start} → ${currentPuzzle.end}\n` +
-        `${moves} moves • ${difficultyEmoji} ${difficulty.toUpperCase()}\n\n` +
+        `${getScoreEmoji()}${moves} moves${parText} • ${difficultyEmoji} ${difficulty.toUpperCase()}\n\n` +
         `Can you beat this? wordescalator.com`;
 
     navigator.clipboard
@@ -107,7 +119,18 @@ const CompletionModal = ({
     return configs[diff] || configs.easy;
   };
 
+  const getPerformanceRating = () => {
+    if (!par || isGivenUp) return null;
+    const diff = moves - par;
+    if (diff <= 0) return { label: "Perfect!", emoji: "🏆", color: "text-amber-500", bg: "bg-amber-50" };
+    if (diff === 1) return { label: "Excellent", emoji: "⭐", color: "text-emerald-600", bg: "bg-emerald-50" };
+    if (diff === 2) return { label: "Great", emoji: "👍", color: "text-blue-600", bg: "bg-blue-50" };
+    if (diff <= 4) return { label: "Good", emoji: "👌", color: "text-slate-600", bg: "bg-slate-50" };
+    return { label: "Completed", emoji: "✓", color: "text-slate-500", bg: "bg-slate-50" };
+  };
+
   const diffConfig = getDifficultyConfig(difficulty);
+  const performance = getPerformanceRating();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -153,20 +176,37 @@ const CompletionModal = ({
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <div className="bg-slate-50 rounded-xl p-4 text-center">
-              <p className="text-3xl font-display font-bold text-slate-900">{moves}</p>
+              <p className={`text-3xl font-display font-bold ${
+                !isGivenUp && par && moves <= par ? 'text-emerald-600' : 'text-slate-900'
+              }`}>{moves}</p>
               <p className="text-xs text-slate-500 uppercase tracking-wider font-medium mt-1">Moves</p>
             </div>
             <div className="bg-slate-50 rounded-xl p-4 text-center">
+              <p className="text-3xl font-display font-bold text-slate-400">{par || '—'}</p>
+              <p className="text-xs text-slate-500 uppercase tracking-wider font-medium mt-1">Optimal</p>
+            </div>
+            <div className="bg-slate-50 rounded-xl p-4 text-center">
               <span
-                className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${diffConfig.bg} ${diffConfig.text} ${diffConfig.border}`}
+                className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${diffConfig.bg} ${diffConfig.text} ${diffConfig.border}`}
               >
                 {difficulty}
               </span>
               <p className="text-xs text-slate-500 uppercase tracking-wider font-medium mt-2">Difficulty</p>
             </div>
           </div>
+
+          {/* Performance Rating */}
+          {performance && (
+            <div className={`flex items-center justify-center gap-2 py-3 rounded-xl ${performance.bg}`}>
+              <span className="text-xl">{performance.emoji}</span>
+              <span className={`font-semibold ${performance.color}`}>{performance.label}</span>
+              {moves === par && (
+                <span className="text-sm text-slate-500 ml-1">— You found the optimal path!</span>
+              )}
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="space-y-3 pt-2">

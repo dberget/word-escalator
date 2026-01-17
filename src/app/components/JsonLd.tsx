@@ -69,7 +69,7 @@ export function JsonLd() {
         name: 'How do you play Word Escalator?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Start with the given word and change one letter at a time to create new valid words. Continue until you reach the target word. Try to complete the puzzle in as few moves as possible to beat the par score.',
+          text: 'Start with the given word and change one letter at a time to create new valid words. Continue until you reach the target word. Try to complete the puzzle in as few moves as possible to match the optimal solution.',
         },
       },
       {
@@ -134,8 +134,8 @@ export function JsonLd() {
       {
         '@type': 'HowToStep',
         position: 5,
-        name: 'Beat the par',
-        text: 'Try to complete the puzzle in as few moves as possible to beat or match the par score.',
+        name: 'Match the optimal',
+        text: 'Try to complete the puzzle in as few moves as possible to match the optimal solution.',
       },
     ],
     totalTime: 'PT5M',
