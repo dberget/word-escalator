@@ -1,0 +1,26 @@
+{
+  "name": "Word Escalator - Daily Word Ladder Puzzle",
+  "short_name": "Word Escalator",
+  "description": "Transform words one letter at a time in this addictive daily word puzzle game. New puzzle every day!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#f97316",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/word-chain-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "entertainment", "education"],
+  "lang": "en",
+  "dir": "ltr"
+}

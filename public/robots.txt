@@ -1,0 +1,11 @@
+# Robots.txt for Word Escalator
+# https://wordescalator.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://wordescalator.com/sitemap.xml
+
+# Crawl-delay (optional, for polite crawling)
+Crawl-delay: 1
