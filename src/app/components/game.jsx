@@ -882,6 +882,16 @@ const WordEvolutionGame = () => {
                 </li>
                 <li>
                   <a
+                    href="https://dial-words.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-400 hover:text-amber-400 transition-colors text-sm"
+                  >
+                    Try Dial Words
+                  </a>
+                </li>
+                <li>
+                  <a
                     href="https://guesshex.com"
                     target="_blank"
                     rel="noopener noreferrer"
