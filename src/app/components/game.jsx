@@ -10,6 +10,11 @@ import {
   getNextDifficulty,
 } from "@/data/puzzleData";
 import {
+  mulberry32,
+  dateToSeed,
+  getUTCDateString,
+} from "@/utils/puzzleUtils";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -31,38 +36,37 @@ const WordEvolutionGame = () => {
   const [hasCompletedDaily, setHasCompletedDaily] = useState(false);
 
   const getDailyPuzzle = () => {
-    const today = new Date();
-    const dateString = `${today.getFullYear()}-${
-      today.getMonth() + 1
-    }-${today.getDate()}`;
+    // Use UTC for consistent global daily puzzles
+    const dateString = getUTCDateString();
 
-    let randomSeed = 0;
-    for (let i = 0; i < dateString.length; i++) {
-      randomSeed += dateString.charCodeAt(i);
-    }
-    randomSeed = (randomSeed % 100) / 100;
+    // Create deterministic random generator from date
+    const seed = dateToSeed(dateString);
+    const random = mulberry32(seed);
 
-    const wordLength = randomSeed < 0.5 ? "fourLetters" : "fiveLetters";
+    // Independent random values for each decision
+    const wordLengthRoll = random();
+    const difficultyRoll = random();
+    const puzzleIndexRoll = random();
 
-    let index = 0;
-    for (let i = dateString.length - 1; i >= 0; i--) {
-      index += dateString.charCodeAt(i);
-    }
+    // Word length selection (50/50)
+    const wordLength = wordLengthRoll < 0.5 ? "fourLetters" : "fiveLetters";
 
-    const difficultyRandom = (index % 100) / 100;
+    // Difficulty selection (hard: 50%, extreme: 25%, impossible: 25%)
     let difficulty;
-    if (difficultyRandom < 0.5) {
+    if (difficultyRoll < 0.5) {
       difficulty = "hard";
-    } else if (difficultyRandom < 0.75) {
+    } else if (difficultyRoll < 0.75) {
       difficulty = "extreme";
     } else {
       difficulty = "impossible";
     }
 
+    // Puzzle selection with uniform distribution
     const puzzlesForLength = puzzleData[wordLength][difficulty];
+    const puzzleIndex = Math.floor(puzzleIndexRoll * puzzlesForLength.length);
 
     return {
-      ...puzzlesForLength[index % puzzlesForLength.length],
+      ...puzzlesForLength[puzzleIndex],
       difficulty: difficulty,
     };
   };

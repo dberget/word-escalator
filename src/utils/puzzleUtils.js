@@ -1,3 +1,41 @@
+/**
+ * Mulberry32 seeded PRNG - produces deterministic random numbers from a seed
+ * @param {number} seed - Integer seed value
+ * @returns {function} Function that returns random number between 0 and 1
+ */
+export function mulberry32(seed) {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Convert a date string to a numeric seed using djb2 hash algorithm
+ * @param {string} dateString - Date string like "2024-3-20"
+ * @returns {number} Positive integer seed
+ */
+export function dateToSeed(dateString) {
+  let hash = 5381;
+  for (let i = 0; i < dateString.length; i++) {
+    const char = dateString.charCodeAt(i);
+    hash = (hash << 5) + hash + char; // hash * 33 + char
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  return Math.abs(hash);
+}
+
+/**
+ * Get UTC date string in YYYY-M-D format for consistent global daily puzzles
+ * @param {Date} date - Date object (defaults to now)
+ * @returns {string} UTC date string
+ */
+export function getUTCDateString(date = new Date()) {
+  return `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
+}
+
 export const generateNewPuzzle = async (startWord, difficulty) => {
     try {
         const response = await fetch('/api/generate-puzzle', {
