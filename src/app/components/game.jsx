@@ -27,6 +27,7 @@ import FeedbackModal from "./feedback-modal";
 import { getOrCreateUserId } from "@/utils/userUtils";
 import { rewardsApi } from "@/utils/rewardsApi";
 import Link from "next/link";
+import GameNav from "./GameNav";
 
 const WordEvolutionGame = () => {
   const validWords = getValidWords();
@@ -484,6 +485,7 @@ const WordEvolutionGame = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <GameNav currentGame="word-escalator" theme="light" />
       <div className="flex-grow w-full max-w-lg mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <header className="text-center space-y-2">

@@ -19,13 +19,6 @@ export function JsonLd() {
       price: '0',
       priceCurrency: 'USD',
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      ratingCount: '150',
-      bestRating: '5',
-      worstRating: '1',
-    },
   }
 
   // VideoGame Schema (more specific for games)
@@ -148,7 +141,6 @@ export function JsonLd() {
     name: 'Word Escalator',
     url: baseUrl,
     logo: `${baseUrl}/word-chain-logo.png`,
-    sameAs: [],
   }
 
   // BreadcrumbList Schema
