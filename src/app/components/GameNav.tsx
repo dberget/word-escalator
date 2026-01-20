@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 // Custom SVG icons designed for letterpress aesthetic
 // Bold, geometric shapes that feel like brass printing blocks
-const GameIcons: Record<string, () => JSX.Element> = {
+const GameIcons: Record<string, () => React.ReactNode> = {
   'guess-hex': () => (
     <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
       {/* Hexagon divided into 3 color segments */}
