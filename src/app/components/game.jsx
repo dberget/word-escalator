@@ -23,7 +23,10 @@ import {
 import InstructionsModal from "./instructions-modal";
 import CompletionModal from "./completion-modal";
 import { notifyPuzzleCompletion } from "@/utils/discord";
+import { createGameStatsClient, getTodayDate } from "@/lib/statsClient";
 import FeedbackModal from "./feedback-modal";
+
+const statsClient = createGameStatsClient('word-escalator');
 import { getOrCreateUserId } from "@/utils/userUtils";
 import { rewardsApi } from "@/utils/rewardsApi";
 import Link from "next/link";
@@ -136,6 +139,15 @@ const WordEvolutionGame = () => {
     const optimalPath = findWordPath(currentPuzzle.start, currentPuzzle.end, validWords);
     setPar(optimalPath.length > 0 ? optimalPath.length - 1 : null); // -1 because path includes start word
 
+    // Track game start
+    const gameMode = !isWarmupCompleted ? "warmup" : isEndlessMode ? "endless" : "daily";
+    statsClient.trackEvent('game_start', {
+      gameMode,
+      difficulty: currentPuzzle.difficulty,
+      startWord: currentPuzzle.start,
+      endWord: currentPuzzle.end,
+    });
+
     setTimeout(() => {
       const firstInput = document.querySelector('input[data-index="0"]');
       firstInput?.focus();
@@ -210,18 +222,30 @@ const WordEvolutionGame = () => {
     setMoves(newMoves);
 
     if (currentWord === currentPuzzle.end) {
+      const gameMode = !isWarmupCompleted ? "warmup" : isEndlessMode ? "endless" : "daily";
+
       await notifyPuzzleCompletion({
         moves: newMoves,
         difficulty: currentDifficulty,
         startWord: currentPuzzle.start,
         endWord: currentPuzzle.end,
         isGivenUp: false,
-        gameMode: !isWarmupCompleted
-          ? "WARMUP"
-          : isEndlessMode
-          ? "ENDLESS"
-          : "DAILY",
+        gameMode: gameMode.toUpperCase(),
       });
+
+      // Track stats
+      statsClient.recordSession({
+        gameMode,
+        score: newMoves,
+        result: 'completed',
+        puzzleDate: gameMode === 'daily' ? getTodayDate() : undefined,
+        metadata: {
+          moves: newMoves,
+          difficulty: currentDifficulty,
+          startWord: currentPuzzle.start,
+          endWord: currentPuzzle.end,
+        },
+      }).catch(err => console.error('Stats tracking failed:', err));
 
       if (typeof Audio !== "undefined") {
         pointsSound.currentTime = 0;
@@ -359,18 +383,30 @@ const WordEvolutionGame = () => {
     setCurrentWord(" ".repeat(currentPuzzle.start.length));
     setMoves(path.length);
 
+    const gameMode = !isWarmupCompleted ? "warmup" : isEndlessMode ? "endless" : "daily";
+
     await notifyPuzzleCompletion({
       moves: path.length,
       difficulty: currentDifficulty,
       startWord: currentPuzzle.start,
       endWord: currentPuzzle.end,
       isGivenUp: true,
-      gameMode: !isWarmupCompleted
-        ? "WARMUP"
-        : isEndlessMode
-        ? "ENDLESS"
-        : "DAILY",
+      gameMode: gameMode.toUpperCase(),
     });
+
+    // Track stats
+    statsClient.recordSession({
+      gameMode,
+      score: path.length,
+      result: 'gave_up',
+      puzzleDate: gameMode === 'daily' ? getTodayDate() : undefined,
+      metadata: {
+        moves: path.length,
+        difficulty: currentDifficulty,
+        startWord: currentPuzzle.start,
+        endWord: currentPuzzle.end,
+      },
+    }).catch(err => console.error('Stats tracking failed:', err));
   };
 
   const getEndlessPuzzle = () => {
