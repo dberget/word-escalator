@@ -333,6 +333,9 @@ const WordEvolutionGame = () => {
   };
 
   const handleShowHints = () => {
+    if (!showHints) {
+      statsClient.trackHint(moves + 1, { previousWords: previousWords.length });
+    }
     setShowHints(!showHints);
   };
 
@@ -412,6 +415,7 @@ const WordEvolutionGame = () => {
     setCurrentPuzzle(newPuzzle);
     setCurrentDifficulty(newPuzzle.difficulty);
     setShowEndlessModeTooltip(true);
+    statsClient.trackModeSelect('endless');
     setTimeout(() => setShowEndlessModeTooltip(false), 5000);
   };
 
@@ -523,7 +527,10 @@ const WordEvolutionGame = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setShowInstructions(true)}
+                onClick={() => {
+                  setShowInstructions(true);
+                  statsClient.trackHelp();
+                }}
                 className="p-2.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800 hover:scale-105 active:scale-95 transition-all duration-100"
                 aria-label="How to play"
               >

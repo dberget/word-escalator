@@ -396,6 +396,19 @@ export function createGameStatsClient(gameType) {
     getStreak: () => getStreak(gameType),
     getLeaderboard: (params) => getLeaderboard(gameType, params),
     getStreakLeaderboard: (limit) => getStreakLeaderboard(gameType, limit),
+
+    // Convenience methods for common events
+    trackShare: (method, success = true) =>
+      trackEvent({ eventType: 'share_clicked', gameType, metadata: { method, success } }),
+
+    trackModeSelect: (mode) =>
+      trackEvent({ eventType: 'mode_selected', gameType, metadata: { mode } }),
+
+    trackHint: (hintNumber, gameProgress = null) =>
+      trackEvent({ eventType: 'hint_used', gameType, metadata: { hintNumber, gameProgress } }),
+
+    trackHelp: (firstTime = false) =>
+      trackEvent({ eventType: 'help_opened', gameType, metadata: { firstTime } }),
   };
 }
 
