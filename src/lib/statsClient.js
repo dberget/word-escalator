@@ -8,35 +8,144 @@
  */
 
 const API_BASE_URL = 'https://api.play-wordfall.com';
-const DEVICE_ID_KEY = 'daily-games-device-id';
+const DEVICE_ID_KEY = 'daily-games-device-id-v2'; // v2 uses fingerprinting for cross-site matching
 
 /**
- * Generate a UUID v4
+ * Simple hash function (cyrb53)
  */
-function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
+function hashString(str, seed = 0) {
+  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+  h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+  h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+}
+
+/**
+ * Generate canvas fingerprint - varies by GPU, font rendering, anti-aliasing
+ */
+function getCanvasFingerprint() {
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 50;
+    const ctx = canvas.getContext('2d');
+
+    // Text rendering (affected by font rendering, anti-aliasing)
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#f60';
+    ctx.fillRect(100, 1, 62, 20);
+    ctx.fillStyle = '#069';
+    ctx.font = '14px Arial, sans-serif';
+    ctx.fillText('Daily Games 🎮', 2, 15);
+    ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
+    ctx.font = '18px Times New Roman, serif';
+    ctx.fillText('Fingerprint', 4, 37);
+
+    // Geometry (affected by GPU)
+    ctx.strokeStyle = 'rgb(120, 186, 176)';
+    ctx.arc(50, 25, 10, 0, Math.PI * 2, true);
+    ctx.stroke();
+
+    return canvas.toDataURL();
+  } catch (e) {
+    return 'canvas-unavailable';
+  }
+}
+
+/**
+ * Generate WebGL fingerprint - GPU info
+ */
+function getWebGLFingerprint() {
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) return 'webgl-unavailable';
+
+    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+    if (debugInfo) {
+      return [
+        gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL),
+        gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+      ].join('|');
+    }
+    return 'webgl-no-debug';
+  } catch (e) {
+    return 'webgl-error';
+  }
+}
+
+/**
+ * Generate a deterministic device fingerprint
+ * Same device/browser = same ID across all sites
+ */
+function generateFingerprint() {
+  const components = [
+    // Browser basics
+    navigator.userAgent,
+    navigator.language,
+    navigator.languages?.join(',') || '',
+    navigator.platform,
+
+    // Screen
+    screen.width + 'x' + screen.height,
+    screen.availWidth + 'x' + screen.availHeight,
+    screen.colorDepth,
+    window.devicePixelRatio || 1,
+
+    // Hardware
+    navigator.hardwareConcurrency || '',
+    navigator.deviceMemory || '',
+
+    // Timezone
+    new Date().getTimezoneOffset(),
+    Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+
+    // Canvas (high entropy)
+    getCanvasFingerprint(),
+
+    // WebGL GPU info
+    getWebGLFingerprint(),
+
+    // Touch support
+    navigator.maxTouchPoints || 0,
+
+    // Misc
+    !!window.sessionStorage,
+    !!window.localStorage,
+    !!window.indexedDB,
+  ];
+
+  const fingerprint = components.join('|');
+  const hash = hashString(fingerprint);
+
+  // Format as UUID-like string for compatibility
+  const hex = hash.toString(16).padStart(16, '0');
+  return `${hex.slice(0,8)}-${hex.slice(8,12)}-4${hex.slice(12,15)}-a${hex.slice(15,18)}-${hashString(fingerprint, 1).toString(16).padStart(12, '0')}`;
 }
 
 /**
  * Get or create a device ID for this browser
- * Returns null if localStorage is unavailable
+ * Uses fingerprinting for cross-site consistency - same device = same ID on all game sites
  */
 export function getDeviceId() {
   try {
     let deviceId = localStorage.getItem(DEVICE_ID_KEY);
     if (!deviceId) {
-      deviceId = generateUUID();
+      deviceId = generateFingerprint();
       localStorage.setItem(DEVICE_ID_KEY, deviceId);
     }
     return deviceId;
   } catch (error) {
     // localStorage unavailable (private browsing, etc.)
-    console.warn('Stats: localStorage unavailable, using session-only ID');
-    return generateUUID();
+    console.warn('Stats: localStorage unavailable, using fingerprint only');
+    return generateFingerprint();
   }
 }
 
