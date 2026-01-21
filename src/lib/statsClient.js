@@ -8,7 +8,10 @@
  */
 
 const API_BASE_URL = 'https://api.play-wordfall.com';
-const DEVICE_ID_KEY = 'daily-games-device-id-v2'; // v2 uses fingerprinting for cross-site matching
+const DEVICE_ID_KEY = 'daily-games-device-id-v3'; // v3 uses stable fingerprinting
+
+// Set by createGameStatsClient to identify which game site the user is on
+let currentSiteDomain = null;
 
 /**
  * Simple hash function (cyrb53)
@@ -28,34 +31,37 @@ function hashString(str, seed = 0) {
 }
 
 /**
- * Generate canvas fingerprint - varies by GPU, font rendering, anti-aliasing
+ * Generate canvas fingerprint - simplified for stability
+ * Uses pixel sampling instead of toDataURL for consistent results
  */
 function getCanvasFingerprint() {
   try {
     const canvas = document.createElement('canvas');
-    canvas.width = 200;
-    canvas.height = 50;
-    const ctx = canvas.getContext('2d');
+    canvas.width = 100;
+    canvas.height = 20;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-    // Text rendering (affected by font rendering, anti-aliasing)
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = '#f60';
-    ctx.fillRect(100, 1, 62, 20);
-    ctx.fillStyle = '#069';
-    ctx.font = '14px Arial, sans-serif';
-    ctx.fillText('Daily Games 🎮', 2, 15);
-    ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
-    ctx.font = '18px Times New Roman, serif';
-    ctx.fillText('Fingerprint', 4, 37);
+    // Simple solid fills - no anti-aliasing variance
+    ctx.fillStyle = '#ff5500';
+    ctx.fillRect(0, 0, 50, 20);
+    ctx.fillStyle = '#0055ff';
+    ctx.fillRect(50, 0, 50, 20);
 
-    // Geometry (affected by GPU)
-    ctx.strokeStyle = 'rgb(120, 186, 176)';
-    ctx.arc(50, 25, 10, 0, Math.PI * 2, true);
-    ctx.stroke();
+    // Text with monospace font (no emoji - they render inconsistently)
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '10px monospace';
+    ctx.fillText('ABCD', 5, 14);
 
-    return canvas.toDataURL();
+    // Hash raw pixel data (more stable than toDataURL)
+    const data = ctx.getImageData(0, 0, 100, 20).data;
+    let hash = 0;
+    for (let i = 0; i < data.length; i += 37) {
+      hash = ((hash << 5) - hash) + data[i];
+      hash = hash & hash;
+    }
+    return hash.toString(16);
   } catch (e) {
-    return 'canvas-unavailable';
+    return 'canvas-na';
   }
 }
 
@@ -157,13 +163,20 @@ async function apiRequest(endpoint, options = {}) {
   try {
     const deviceId = getDeviceId();
 
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-Device-ID': deviceId,
+      ...options.headers,
+    };
+
+    // Include site domain for user tracking
+    if (currentSiteDomain) {
+      headers['X-Site-Domain'] = currentSiteDomain;
+    }
+
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Device-ID': deviceId,
-        ...options.headers,
-      },
+      headers,
     });
 
     if (!response.ok) {
@@ -370,6 +383,9 @@ export function getTodayDate() {
  * @returns {Object} Stats client methods for this game
  */
 export function createGameStatsClient(gameType) {
+  // Set the site domain so all API requests include it
+  currentSiteDomain = gameType;
+
   return {
     getDeviceId,
     getTodayDate,
