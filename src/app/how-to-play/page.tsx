@@ -185,15 +185,42 @@ export default function HowToPlay() {
           </ul>
         </section>
 
-        {/* CTA */}
-        <div className="text-center pt-6 border-t border-zinc-800">
-          <Link
-            href="/"
-            className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
-          >
-            Play Now
-          </Link>
-        </div>
+        {/* Play Now */}
+        <section className="mb-10">
+          <h2 className="text-2xl font-semibold mb-4 text-orange-500">
+            Start Playing
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Link
+              href="/"
+              className="bg-orange-500 hover:bg-orange-600 rounded-lg p-5 transition-colors group"
+            >
+              <h3 className="font-semibold text-white mb-1 flex items-center gap-2">
+                Daily Challenge
+                <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </h3>
+              <p className="text-sm text-white/80">
+                New puzzle every day at midnight UTC.
+              </p>
+            </Link>
+            <Link
+              href="/?mode=endless"
+              className="bg-zinc-800 hover:bg-zinc-700 rounded-lg p-5 transition-colors group"
+            >
+              <h3 className="font-semibold text-white mb-1 flex items-center gap-2">
+                Endless Mode
+                <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </h3>
+              <p className="text-sm text-zinc-400">
+                Unlimited puzzles. Choose your difficulty.
+              </p>
+            </Link>
+          </div>
+        </section>
       </div>
     </main>
   )

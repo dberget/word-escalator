@@ -33,8 +33,16 @@ import GameNav from "./GameNav";
 const WordEvolutionGame = () => {
   const validWords = getValidWords();
 
-  const [isWarmupCompleted, setIsWarmupCompleted] = useState(false);
-  const [isEndlessMode, setIsEndlessMode] = useState(false);
+  const [isWarmupCompleted, setIsWarmupCompleted] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const params = new URLSearchParams(window.location.search);
+    return params.get("mode") === "endless";
+  });
+  const [isEndlessMode, setIsEndlessMode] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const params = new URLSearchParams(window.location.search);
+    return params.get("mode") === "endless";
+  });
   const [hasCompletedDaily, setHasCompletedDaily] = useState(false);
 
   const getDailyPuzzle = () => {
@@ -114,10 +122,18 @@ const WordEvolutionGame = () => {
   }, []);
 
   useEffect(() => {
-    const warmup = getWarmupPuzzle();
-    setCurrentPuzzle(warmup);
-    setCurrentDifficulty(warmup.difficulty);
-    setCurrentWord(" ".repeat(warmup.start.length));
+    // Check if starting in endless mode from URL param
+    if (isEndlessMode) {
+      const puzzle = getEndlessPuzzle();
+      setCurrentPuzzle(puzzle);
+      setCurrentDifficulty(puzzle.difficulty);
+      setCurrentWord(" ".repeat(puzzle.start.length));
+    } else {
+      const warmup = getWarmupPuzzle();
+      setCurrentPuzzle(warmup);
+      setCurrentDifficulty(warmup.difficulty);
+      setCurrentWord(" ".repeat(warmup.start.length));
+    }
   }, []);
 
   useEffect(() => {
@@ -416,6 +432,7 @@ const WordEvolutionGame = () => {
     setCurrentDifficulty(newPuzzle.difficulty);
     setShowEndlessModeTooltip(true);
     statsClient.trackModeSelect('endless');
+    window.history.replaceState({}, '', '/?mode=endless');
     setTimeout(() => setShowEndlessModeTooltip(false), 5000);
   };
 
@@ -877,6 +894,133 @@ const WordEvolutionGame = () => {
           hasCompletedDaily={hasCompletedDaily}
         />
       </div>
+
+      {/* Below-the-fold SEO Content */}
+      <section className="w-full bg-[#0a0a0a] text-white">
+        <div className="max-w-3xl mx-auto px-6 py-16">
+          {/* How to Play Summary */}
+          <div className="mb-16">
+            <h2 className="text-2xl font-semibold mb-6 text-orange-500">
+              How to Play Word Escalator
+            </h2>
+            <ol className="space-y-4 text-zinc-300 mb-6">
+              <li className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-orange-500/20 text-orange-500 flex items-center justify-center text-sm font-bold">1</span>
+                <span>Start with the given word and transform it into the target word</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-orange-500/20 text-orange-500 flex items-center justify-center text-sm font-bold">2</span>
+                <span>Change exactly one letter per move - each step must form a valid English word</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-orange-500/20 text-orange-500 flex items-center justify-center text-sm font-bold">3</span>
+                <span>Try to match the optimal solution - the fewer moves, the better your score</span>
+              </li>
+            </ol>
+            <Link
+              href="/how-to-play"
+              className="inline-flex items-center text-orange-500 hover:text-orange-400 transition-colors text-sm font-medium"
+            >
+              Read full instructions
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+
+          {/* FAQ Section */}
+          <div className="mb-16">
+            <h2 className="text-2xl font-semibold mb-6 text-orange-500">
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-4">
+              <details className="group bg-zinc-900 rounded-lg">
+                <summary className="flex items-center justify-between cursor-pointer p-4 text-white font-medium">
+                  What is Word Escalator?
+                  <svg className="w-5 h-5 text-zinc-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="px-4 pb-4 text-zinc-400">
+                  Word Escalator is a free daily word ladder puzzle game where you transform one word into another by changing one letter at a time. Each step must form a valid English word. It&apos;s inspired by Lewis Carroll&apos;s classic &quot;Doublets&quot; game from 1877.
+                </p>
+              </details>
+
+              <details className="group bg-zinc-900 rounded-lg">
+                <summary className="flex items-center justify-between cursor-pointer p-4 text-white font-medium">
+                  Is Word Escalator free to play?
+                  <svg className="w-5 h-5 text-zinc-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="px-4 pb-4 text-zinc-400">
+                  Yes! Word Escalator is completely free to play with no ads, subscriptions, or paywalls. Play the daily puzzle or enjoy unlimited games in Endless Mode.
+                </p>
+              </details>
+
+              <details className="group bg-zinc-900 rounded-lg">
+                <summary className="flex items-center justify-between cursor-pointer p-4 text-white font-medium">
+                  How often do new puzzles appear?
+                  <svg className="w-5 h-5 text-zinc-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="px-4 pb-4 text-zinc-400">
+                  A new daily puzzle is available every day at midnight UTC. The same puzzle is available for all players worldwide, so you can compare your solution with friends. Plus, Endless Mode offers unlimited puzzles anytime.
+                </p>
+              </details>
+
+              <details className="group bg-zinc-900 rounded-lg">
+                <summary className="flex items-center justify-between cursor-pointer p-4 text-white font-medium">
+                  What&apos;s the difference between difficulty levels?
+                  <svg className="w-5 h-5 text-zinc-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="px-4 pb-4 text-zinc-400">
+                  Word Escalator features four difficulty levels: Easy (2-3 moves), Hard (4-5 moves), Extreme (6-7 moves), and Impossible (8+ moves). The optimal solution length increases with difficulty, challenging you to find more creative word paths.
+                </p>
+              </details>
+
+              <details className="group bg-zinc-900 rounded-lg">
+                <summary className="flex items-center justify-between cursor-pointer p-4 text-white font-medium">
+                  Can I play on mobile?
+                  <svg className="w-5 h-5 text-zinc-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="px-4 pb-4 text-zinc-400">
+                  Yes! Word Escalator is fully responsive and works great on phones, tablets, and desktop browsers. No app download required - just visit the website and start playing.
+                </p>
+              </details>
+            </div>
+          </div>
+
+          {/* About Section */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-4 text-orange-500">
+              About Word Escalator
+            </h2>
+            <div className="text-zinc-400 space-y-4">
+              <p>
+                Word Escalator brings the classic word ladder puzzle to the modern web. Originally invented by Lewis Carroll in 1877 and known as &quot;Doublets,&quot; word ladders have challenged puzzle enthusiasts for nearly 150 years.
+              </p>
+              <p>
+                Whether you&apos;re a word game enthusiast looking for your daily brain workout or a casual player wanting a quick mental challenge, Word Escalator offers the perfect balance of accessibility and depth. Challenge yourself, improve your vocabulary, and join thousands of players solving the daily puzzle.
+              </p>
+            </div>
+            <Link
+              href="/about"
+              className="inline-flex items-center text-orange-500 hover:text-orange-400 transition-colors text-sm font-medium mt-4"
+            >
+              Learn more about Word Escalator
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="w-full mt-auto bg-slate-900 text-slate-300">
