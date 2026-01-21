@@ -27,8 +27,6 @@ import { createGameStatsClient, getTodayDate } from "@/lib/statsClient";
 import FeedbackModal from "./feedback-modal";
 
 const statsClient = createGameStatsClient('word-escalator');
-import { getOrCreateUserId } from "@/utils/userUtils";
-import { rewardsApi } from "@/utils/rewardsApi";
 import Link from "next/link";
 import GameNav from "./GameNav";
 
@@ -100,7 +98,6 @@ const WordEvolutionGame = () => {
   const [isGivenUp, setIsGivenUp] = useState(false);
   const [showEndlessModeTooltip, setShowEndlessModeTooltip] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [userId, setUserId] = useState(null);
   const [par, setPar] = useState(null);
 
   let pointsSound;
@@ -114,9 +111,6 @@ const WordEvolutionGame = () => {
     if (typeof Audio !== "undefined") {
       pointsSound.load();
     }
-    getOrCreateUserId().then((id) => {
-      setUserId(id);
-    });
   }, []);
 
   useEffect(() => {
@@ -252,15 +246,6 @@ const WordEvolutionGame = () => {
         pointsSound
           .play()
           .catch((err) => console.log("Audio play failed:", err));
-      }
-
-      if (
-        !isWarmupCompleted &&
-        !isEndlessMode &&
-        !hasCompletedDaily &&
-        userId
-      ) {
-        await rewardsApi.awardPoints(userId, 1);
       }
 
       setPuzzleHistory([
