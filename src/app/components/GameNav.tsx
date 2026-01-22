@@ -76,6 +76,7 @@ type Theme = 'light' | 'cream' | 'dark';
 interface GameNavProps {
   currentGame: string;
   theme?: Theme;
+  streak?: number;
 }
 
 const themeClasses = {
@@ -111,7 +112,7 @@ const themeClasses = {
 /**
  * GameNav - Hamburger navigation component for daily games (Tailwind version)
  */
-export default function GameNav({ currentGame, theme = 'light' }: GameNavProps) {
+export default function GameNav({ currentGame, theme = 'light', streak = 0 }: GameNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
 
@@ -187,6 +188,12 @@ export default function GameNav({ currentGame, theme = 'light' }: GameNavProps) 
             <span>{currentGameData.name}</span>
           </span>
         )}
+
+        {/* Streak display */}
+        <span className={`ml-auto flex items-center gap-0.5 text-[15px] sm:text-base font-semibold ${streak > 0 ? 'text-orange-500' : classes.textMuted}`}>
+          <span className={`${streak > 0 ? '' : 'opacity-40 grayscale'} transition-all duration-300`}>🔥</span>
+          <span>{streak}</span>
+        </span>
       </div>
 
       {/* Dropdown menu */}

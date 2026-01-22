@@ -12,7 +12,7 @@ import {
 import {
   mulberry32,
   dateToSeed,
-  getUTCDateString,
+  getLocalDateString,
 } from "@/utils/puzzleUtils";
 import {
   Tooltip,
@@ -24,6 +24,7 @@ import InstructionsModal from "./instructions-modal";
 import CompletionModal from "./completion-modal";
 import { notifyPuzzleCompletion } from "@/utils/discord";
 import { createGameStatsClient, getTodayDate } from "@/lib/statsClient";
+import { streakStore } from "@/lib/streakStore";
 import FeedbackModal from "./feedback-modal";
 
 const statsClient = createGameStatsClient('word-escalator');
@@ -44,10 +45,14 @@ const WordEvolutionGame = () => {
     return params.get("mode") === "endless";
   });
   const [hasCompletedDaily, setHasCompletedDaily] = useState(false);
+  const [streak] = useState(() => {
+    if (typeof window === "undefined") return 0;
+    return streakStore.getGameStreak('word-escalator').currentStreak;
+  });
 
   const getDailyPuzzle = () => {
-    // Use UTC for consistent global daily puzzles
-    const dateString = getUTCDateString();
+    // Use local time for daily puzzles
+    const dateString = getLocalDateString();
 
     // Create deterministic random generator from date
     const seed = dateToSeed(dateString);
@@ -256,6 +261,11 @@ const WordEvolutionGame = () => {
           endWord: currentPuzzle.end,
         },
       }).catch(err => console.error('Stats tracking failed:', err));
+
+      // Record win for streak tracking (daily mode only)
+      if (gameMode === 'daily') {
+        streakStore.recordWin('word-escalator');
+      }
 
       if (typeof Audio !== "undefined") {
         pointsSound.currentTime = 0;
@@ -527,7 +537,7 @@ const WordEvolutionGame = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <GameNav currentGame="word-escalator" theme="light" />
+      <GameNav currentGame="word-escalator" theme="light" streak={streak} />
       <div className="flex-grow w-full max-w-lg mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <header className="text-center space-y-2">
@@ -619,6 +629,17 @@ const WordEvolutionGame = () => {
                 <span className="text-xs text-slate-400 uppercase tracking-wider font-medium">Optimal</span>
                 <span className="font-display text-lg font-bold text-slate-600">{par}</span>
               </div>
+              {!isEndlessMode && (
+                <>
+                  <span className="text-slate-300">|</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 uppercase tracking-wider font-medium">Streak</span>
+                    <span className="font-display text-lg font-bold" style={{ color: streak > 0 ? '#f97316' : '#94a3b8' }}>
+                      {streak > 0 ? `🔥 ${streak}` : '0'}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>

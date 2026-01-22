@@ -28,12 +28,12 @@ export function dateToSeed(dateString) {
 }
 
 /**
- * Get UTC date string in YYYY-M-D format for consistent global daily puzzles
+ * Get local date string in YYYY-M-D format
  * @param {Date} date - Date object (defaults to now)
- * @returns {string} UTC date string
+ * @returns {string} Local date string
  */
-export function getUTCDateString(date = new Date()) {
-  return `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
+export function getLocalDateString(date = new Date()) {
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }
 
 export const generateNewPuzzle = async (startWord, difficulty) => {
