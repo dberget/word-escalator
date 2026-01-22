@@ -6,7 +6,8 @@ import {
 } from "@/components/ui/dialog";
 import { Copy, Share2, Zap, Trophy, Target } from "lucide-react";
 import Confetti from "react-confetti";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { getPromoGame } from "../../../../shared/crossPromo";
 
 const CompletionModal = ({
   open,
@@ -25,6 +26,12 @@ const CompletionModal = ({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
     height: typeof window !== "undefined" ? window.innerHeight : 0,
   });
+
+  // Get a game to promote (deterministic based on day number)
+  const promoGame = useMemo(
+    () => getPromoGame('word-escalator', getDayNumber()),
+    []
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -242,6 +249,26 @@ const CompletionModal = ({
               <Zap className="w-5 h-5" />
               <span>Continue in Endless Mode</span>
             </button>
+
+            {/* Cross-promotion CTA */}
+            {promoGame && (
+              <div className="pt-4 mt-2 border-t border-slate-100 text-center">
+                <p className="text-sm text-slate-500 mb-2">
+                  Fun? Try this next
+                </p>
+                <a
+                  href={promoGame.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-amber-600 hover:text-amber-700 transition-colors"
+                >
+                  <span className="w-5 h-5">
+                    <promoGame.Icon />
+                  </span>
+                  Play Now →
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
